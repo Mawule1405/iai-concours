@@ -1,0 +1,35 @@
+@if (isOpen) {
+  <div class="fixed inset-0 z-[100] flex justify-end bg-slate-900/80 backdrop-blur-[2px] animate-in fade-in duration-200">
+
+    <div class="bg-white w-full md:w-1/2 max-w-[50vw] h-full flex flex-col shadow-[-10px_0_50px_rgba(0,0,0,0.2)] border-l border-slate-300 rounded-none overflow-hidden animate-in slide-in-from-right duration-200">
+
+      <div class="flex-shrink-0 bg-brand-blue-900 border-b border-brand-blue-800 p-4 relative overflow-hidden">
+        <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-orange-500"></div>
+
+        <div class="flex justify-between items-start">
+          <div class="pl-2">
+            <h3 class="text-sm font-black text-white uppercase tracking-[0.2em] leading-none">
+              {{ title }}
+            </h3>
+            @if (description) {
+              <p class="text-[10px] text-orange-400 font-bold uppercase tracking-widest mt-1.5 opacity-90 italic">
+                {{ description }}
+              </p>
+            }
+          </div>
+
+          <button (click)="onClose()" class="text-white/50 hover:text-white transition-colors p-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-grow p-4 overflow-y-auto custom-scrollbar bg-white text-slate-700">
+        <ng-content></ng-content>
+      </div>
+
+    </div>
+  </div>
+}

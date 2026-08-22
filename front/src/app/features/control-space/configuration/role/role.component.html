@@ -1,0 +1,135 @@
+<div class="bg-[#f8f6f2] h-screen flex flex-col overflow-hidden">
+
+  <!-- En-tête -->
+  <div class="flex-shrink-0 flex justify-between items-center bg-white border-b border-[#e5dfd4] h-14 px-4 z-20">
+    <div class="flex items-center space-x-4 h-full">
+      <div class="h-14 w-14 flex items-center justify-center border-r border-[#e5dfd4] text-[#1a4231] bg-[#f8f6f2]">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg font-black text-[#1a4231] uppercase tracking-tighter leading-none">Gestion des Rôles</h1>
+        <p class="text-[8px] text-[#1a4231]/80 font-black uppercase tracking-[0.2em] mt-0.5">Security Control</p>
+      </div>
+    </div>
+
+    <button (click)="onCreate()"
+            class="flex items-center space-x-2 bg-[#1a4231] text-[#f9d71c] px-6 h-full text-[10px] font-bold uppercase tracking-widest hover:bg-[#1a4231]/90 transition-all rounded-none group border-l border-[#1a4231]">
+      <svg class="w-4 h-4 transition-transform group-hover:rotate-90 text-[#f9d71c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      <span>Nouveau Rôle</span>
+    </button>
+  </div>
+
+  <!-- Tableau des Rôles -->
+  <div class="flex-grow overflow-y-auto custom-scrollbar bg-white">
+    <table class="w-full text-left border-collapse">
+      <thead class="sticky top-0 z-10 shadow-sm">
+      <tr class="bg-[#f8f6f2] border-b border-[#e5dfd4] text-[10px] font-bold uppercase text-slate-600 tracking-wider">
+        <th class="px-4 py-2 text-[9px] font-black text-slate-500 uppercase tracking-[0.15em]">Nom / Identifiant</th>
+        <th class="px-4 py-2 text-[9px] font-black text-slate-500 uppercase tracking-[0.15em]">Description</th>
+        <th class="px-4 py-2 text-[9px] font-black text-slate-500 uppercase tracking-[0.15em] text-right">Actions</th>
+      </tr>
+      </thead>
+
+      <tbody class="divide-y divide-[#e5dfd4]/60">
+        @for (role of roles; track role.id) {
+          <tr class="hover:bg-[#f8f6f2] transition-colors group">
+            <td class="px-4 py-2">
+              <div class="flex items-center space-x-2">
+                <div class="w-1.5 h-1.5 bg-[#f9d71c]"></div>
+                <span class="text-[11px] font-black text-[#1a4231] uppercase tracking-tight">{{ role.name }}</span>
+              </div>
+            </td>
+            <td class="px-4 py-2 text-[10px] text-slate-600 font-bold uppercase tracking-wide">
+              {{ role.description || 'Standard Access' }}
+            </td>
+            <td class="px-4 py-2">
+              <div class="flex justify-end space-x-1">
+
+                <!-- Popover Permissions -->
+                <div class="relative">
+                  <button (click)="togglePermissions(role.id)"
+                          [class.!bg-[#1a4231]]="expandedRoleId === role.id"
+                          [class.!text-[#f9d71c]]="expandedRoleId === role.id"
+                          class="p-1.5 border border-[#e5dfd4] hover:bg-[#1a4231] hover:text-[#f9d71c] transition-all rounded-none text-slate-600 bg-white">
+                    <svg class="w-4 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                  </button>
+
+                  @if (expandedRoleId === role.id) {
+                    <div class="absolute right-0 mt-1 w-80 bg-[#1a4231] text-white shadow-2xl z-50 rounded-none border border-[#e5dfd4]/30 animate-in fade-in slide-in-from-top-1 duration-200">
+                      <div class="p-2 border-b border-white/10 bg-[#1a4231]/80 flex justify-between items-center">
+                        <p class="text-[8px] font-black text-[#f9d71c] uppercase tracking-[0.2em]">Permissions Matrix</p>
+                        <span class="text-[7px] bg-white/10 px-1.5 py-0.5 text-white/80 font-bold uppercase">Authorized</span>
+                      </div>
+
+                      <div class="max-h-64 overflow-y-auto p-0 divide-y divide-white/5 custom-scrollbar">
+                        @for (perm of role.permissions; track perm.id) {
+                          <div class="px-4 py-2.5 hover:bg-white/5 transition-colors group/item">
+                            <div class="flex justify-between items-center mb-0.5">
+                              <span class="text-[10px] font-black text-[#f9d71c] uppercase tracking-tight">{{ perm.name }}</span>
+                              <div class="w-1 h-1 bg-[#f9d71c] rounded-full"></div>
+                            </div>
+                            <p class="text-[9px] text-white/70 font-medium leading-relaxed italic">
+                              {{ perm.description || 'No technical documentation available for this privilege.' }}
+                            </p>
+                          </div>
+                        } @empty {
+                          <div class="p-8 text-center">
+                            <svg class="w-8 h-8 text-white/20 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            <p class="text-[9px] text-white/50 italic uppercase tracking-widest text-center">Null Pointer: No Permissions</p>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                <!-- Bouton Modifier -->
+                <button (click)="onUpdate(role)"
+                        class="p-1.5 border border-[#e5dfd4] hover:bg-[#1a4231] hover:text-[#f9d71c] transition-all rounded-none text-slate-600 bg-white">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                  </svg>
+                </button>
+
+                <!-- Bouton Supprimer -->
+                <button (click)="onDelete(role.id)"
+                        class="p-1.5 border border-[#e5dfd4] hover:bg-red-600 hover:text-white transition-all rounded-none text-red-600 bg-white">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+@if(showCreateModal){
+  <app-role-manage
+    [isOpen]="showCreateModal"
+    [allPermissions]="permissions"
+    (close)="showCreateModal = false"
+    (save)="onSaveCreate($event)"
+  />
+}
+
+@if(showUpdateModal){
+  <app-role-manage
+    [isOpen]="showUpdateModal"
+    [role]="selectedRole"
+    [allPermissions]="permissions"
+    (close)="showUpdateModal = false"
+    (save)="onSaveUpdate($event)"
+  />
+}

@@ -1,0 +1,70 @@
+<div class="bg-slate-50 h-screen flex flex-col overflow-hidden relative">
+
+  <div class="flex-shrink-0 flex justify-between items-center bg-white border-b border-slate-200 h-14 px-4 z-20">
+    <div class="flex items-center space-x-4 h-full">
+      <div class="h-14 w-14 flex items-center justify-center border-r border-slate-200 text-brand-blue-900 bg-slate-50/50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-lg font-black text-brand-blue-900 uppercase tracking-tighter leading-none">Permissions Système</h2>
+        <p class="text-[8px] text-brand-orange-500 font-black uppercase tracking-[0.2em] mt-0.5">Registre des privilèges</p>
+      </div>
+    </div>
+
+    <div class="flex items-center h-full border-l border-slate-200 pl-4 space-x-3">
+      <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Status: Restricted</span>
+      <span class="text-[10px] font-bold text-brand-blue-900 bg-brand-blue-50 px-3 py-1 border border-brand-blue-100">
+         {{ permissions.length }} PRIVILÈGES
+       </span>
+    </div>
+  </div>
+
+  <div class="flex-1 min-h-0 relative bg-white overflow-hidden">
+    <div class="absolute inset-0 overflow-y-auto custom-scrollbar">
+
+      @if (isLoading) {
+        <div class="flex flex-col items-center justify-center h-full space-y-4">
+          <div class="animate-spin h-6 w-6 border-2 border-brand-blue-900 border-t-brand-orange-500"></div>
+          <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Initialisation...</span>
+        </div>
+      } @else {
+        <table class="w-full text-left border-collapse">
+          <thead class="sticky top-0 z-10 shadow-sm">
+          <tr class="bg-slate-100 border-b border-slate-200 text-[10px] font-bold uppercase text-slate-600 tracking-wider">
+            <th class="px-4 py-2 text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] w-16">#</th>
+            <th class="px-4 py-2 text-[9px] font-black text-slate-400 uppercase tracking-[0.15em]">Nom Technique</th>
+            <th class="px-4 py-2 text-[9px] font-black text-slate-400 uppercase tracking-[0.15em]">Description</th>
+            <th class="px-4 py-2 text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] text-right">Horodatage</th>
+          </tr>
+          </thead>
+
+          <tbody class="divide-y divide-slate-100">
+            @for (perm of permissions; track perm.id; let i = $index) {
+              <tr class="hover:bg-brand-blue-50/30 transition-colors group">
+                <td class="px-4 py-2 text-[10px] font-black text-slate-300 group-hover:text-brand-orange-500 transition-colors italic">
+                  {{ i + 1 | number:'2.0' }}
+                </td>
+                <td class="px-4 py-2">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-1.5 h-1.5 bg-brand-orange-500"></div>
+                    <span class="text-[11px] font-black text-brand-blue-900 uppercase tracking-tight">{{ perm.name }}</span>
+                  </div>
+                </td>
+                <td class="px-4 py-2">
+                  <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wide leading-relaxed">{{ perm.description }}</p>
+                </td>
+                <td class="px-4 py-2 text-right text-[9px] font-black text-slate-400 uppercase tracking-tighter">
+                  {{ perm.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <div class="h-20 bg-transparent"></div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,517 @@
+<div class="flex h-screen bg-slate-50/50 overflow-hidden">
+  <main class="flex-1 flex flex-col min-w-0">
+    <div class="flex-grow overflow-y-auto flex flex-col">
+      <div class="w-full h-full pb-16 overflow-y-auto p-0 sm:p-0 sm:mb-10">
+
+        <!-- En-tête compact institutionnel -->
+        <div class="bg-[#1a4231] p-4 text-white border-b-4 border-[#f9d71c] shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+          <div>
+            <h1 class="text-base sm:text-lg font-black uppercase tracking-widest flex items-center gap-2">
+              <i class="fas fa-user-graduate text-[#f9d71c]"></i>
+              Gestion des Candidats
+            </h1>
+            <p class="text-[10px] sm:text-xs text-[#f9d71c] font-bold uppercase tracking-wider mt-0.5 opacity-90">
+              Portail Officiel du Concours
+            </p>
+          </div>
+
+          <!-- Actions de l'en-tête -->
+          <button
+            type="button"
+            (click)="resetFilters()"
+            title="Réinitialiser et actualiser"
+            class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-[#f9d71c] border border-[#f9d71c]/40 text-xs font-black uppercase tracking-wider transition-all duration-150 flex items-center gap-1.5 cursor-pointer disabled:opacity-50">
+            <i class="fas fa-sync-alt text-[11px]" [class.fa-spin]="loading()"></i>
+            <span>Actualiser</span>
+          </button>
+        </div>
+
+        <!-- Carte Principale -->
+        <div class="p-2">
+          <div class="bg-white border border-[#e5dfd4] shadow-sm rounded-sm">
+
+            <!-- Zone Recherche & Filtres Responsive -->
+            <div class="p-3 sm:pt-1 border-b border-[#e5dfd4] bg-white space-y-3">
+
+              <!-- Barre de Recherche et Filtres principaux -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-9 gap-2">
+
+                <!-- Input Recherche Numéro -->
+                <div class="relative lg:col-span-2">
+                  <input
+                    type="text"
+                    [value]="searchNumero()"
+                    (input)="searchNumero.set($any($event.target).value); onFilterChange()"
+                    placeholder="Rechercher un candidat..."
+                    class="w-full pl-8 pr-3 py-1.5 bg-white border border-[#e5dfd4] text-xs font-medium text-[#1a4231] focus:outline-none focus:border-[#1a4231]"
+                  />
+                  <i class="fas fa-search absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                </div>
+
+                <!-- Filtre Sexe -->
+                <select
+                  [value]="filterGender()"
+                  (change)="filterGender.set($any($event.target).value); onFilterChange()"
+                  class="w-full bg-white border border-[#e5dfd4] text-xs font-bold text-[#1a4231] px-2 py-1.5 focus:outline-none uppercase tracking-wider cursor-pointer">
+                  <option value="">-- Sexe --</option>
+                  <option value="M">Masculin</option>
+                  <option value="F">Féminin</option>
+                </select>
+
+                <!-- Filtre Statut -->
+                <select
+                  [value]="filterStatus()"
+                  (change)="filterStatus.set($any($event.target).value); onFilterChange()"
+                  class="w-full bg-white border border-[#e5dfd4] text-xs font-bold text-[#1a4231] px-2 py-1.5 focus:outline-none uppercase tracking-wider cursor-pointer">
+                  <option value="">-- Statut --</option>
+                  <option [value]="Status.PENDING">En attente (PENDING)</option>
+                  <option [value]="Status.REGISTERED_ONLY">Inscrit seul</option>
+                  <option [value]="Status.PAYMENT_ONLY">Payé seul</option>
+                  <option [value]="Status.REGISTERED_AND_PAYMENT">Inscrit & Payé</option>
+                </select>
+
+                <!-- Filtre Série -->
+                <select
+                  [value]="filterSerie()"
+                  (change)="filterSerie.set($any($event.target).value); onFilterChange()"
+                  class="w-full bg-white border border-[#e5dfd4] text-xs font-bold text-[#1a4231] px-2 py-1.5 focus:outline-none uppercase tracking-wider cursor-pointer">
+                  <option value="">-- Série --</option>
+                  @for (s of Serie | keyvalue; track s.key) {
+                    <option [value]="s.value">{{ s.value }}</option>
+                  }
+                </select>
+
+                <!-- Filtre Option / Cycle -->
+                <select
+                  [value]="filterOption()"
+                  (change)="filterOption.set($any($event.target).value); onFilterChange()"
+                  class="w-full bg-white border border-[#e5dfd4] text-xs font-bold text-[#1a4231] px-2 py-1.5 focus:outline-none uppercase tracking-wider cursor-pointer">
+                  <option value="">-- Cycle / Option --</option>
+                  <option [value]="Cycle.WORKS_ENGINEERING">Travaux d'Ingénierie</option>
+                  <option [value]="Cycle.DESIGN_ENGINEERING">Ingénierie de Conception</option>
+                </select>
+
+                <button *hasPermission="'PERM_EXPORT'" (click)="exportFile('csv')" title="Exporter en CSV"
+                        class="flex-1 sm:flex-initial px-2.5 py-1 text-[10px] font-black uppercase text-[#1a4231] bg-white border border-[#e5dfd4] hover:bg-[#f8f6f2] flex items-center justify-center gap-1 transition-colors">
+                  <i class="fas fa-file-csv text-emerald-700"></i> CSV
+                </button>
+
+                <button *hasPermission="'PERM_EXPORT'" (click)="exportFile('excel')" title="Exporter en Excel"
+                        class="flex-1 sm:flex-initial px-2.5 py-1 text-[10px] font-black uppercase text-[#1a4231] bg-white border border-[#e5dfd4] hover:bg-[#f8f6f2] flex items-center justify-center gap-1 transition-colors">
+                  <i class="fas fa-file-excel text-emerald-600"></i> Excel
+                </button>
+
+                <button *hasPermission="'PERM_EXPORT'" (click)="exportFile('pdf')" title="Exporter en PDF"
+                        class="flex-1 sm:flex-initial px-2.5 py-1 text-[10px] font-black uppercase text-[#1a4231] bg-white border border-[#e5dfd4] hover:bg-[#f8f6f2] flex items-center justify-center gap-1 transition-colors">
+                  <i class="fas fa-file-pdf text-rose-600"></i> PDF
+                </button>
+
+              </div>
+
+            </div>
+
+            <!-- ZONE DE CONTENU : CARTES (MOBILE) + TABLEAU (DESKTOP) -->
+            @if (loading()) {
+              <div class="p-12 text-center text-[#1a4231] font-bold uppercase tracking-widest">
+                <i class="fas fa-circle-notch fa-spin text-xl mb-2 block"></i> Chargement des données backend...
+              </div>
+            } @else {
+
+              <!-- ========================================================================= -->
+                <!-- 1. VUE MOBILE : Cartes (Visibles uniquement sur écran < sm)               -->
+                <!-- ========================================================================= -->
+              <div class="block sm:hidden divide-y divide-[#e5dfd4]">
+                @for (candidat of candidates(); track candidat.id || candidat.numero) {
+                  <div class="p-3.5 bg-white space-y-3 hover:bg-slate-50/50 transition-colors">
+
+                    <!-- 1. En-tête Carte : Numéro, Date Enr. & Statut -->
+                    <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                      <div class="flex items-center gap-1.5">
+          <span class="font-mono font-black text-xs text-[#1a4231] bg-[#f8f6f2] px-2 py-0.5 border border-[#e5dfd4] rounded-xs">
+            N° {{ candidat.numero }}
+          </span>
+                        <span class="text-[10px] text-slate-500 font-semibold">
+            Inscrit le : <strong class="text-[#1a4231]">{{ candidat.enrolmentDate | date:'dd/MM/yyyy' }}</strong>
+          </span>
+                      </div>
+
+                      <div>
+                        @switch (candidat.status) {
+                          @case (Status.REGISTERED_AND_PAYMENT) {
+                            <span class="px-2 py-0.5 bg-emerald-100 border border-emerald-300 text-emerald-800 text-[9px] font-black uppercase rounded-xs">Inscrit & Payé</span>
+                          }
+                          @case (Status.PAYMENT_ONLY) {
+                            <span class="px-2 py-0.5 bg-blue-100 border border-blue-300 text-blue-800 text-[9px] font-black uppercase rounded-xs">Payé Seul</span>
+                          }
+                          @case (Status.REGISTERED_ONLY) {
+                            <span class="px-2 py-0.5 bg-purple-100 border border-purple-300 text-purple-800 text-[9px] font-black uppercase rounded-xs">Inscrit Seul</span>
+                          }
+                          @default {
+                            <span class="px-2 py-0.5 bg-amber-100 border border-amber-300 text-amber-800 text-[9px] font-black uppercase rounded-xs">En Attente</span>
+                          }
+                        }
+                      </div>
+                    </div>
+
+                    <!-- 2. Identité du Candidat -->
+                    <div class="space-y-1">
+                      <p class="text-xs font-black uppercase text-slate-800 tracking-wide">
+                        {{ candidat.lastName }} {{ candidat.firstName }}
+                      </p>
+                      <div class="flex items-center gap-3 text-[10px] font-medium text-slate-500">
+                        <span>Sexe : <strong class="text-[#1a4231] font-bold">{{ candidat.gender }}</strong></span>
+                        <span class="text-slate-300">•</span>
+                        <span>Né(e) le : <strong class="text-[#1a4231] font-bold">{{ candidat.birthDate | date:'dd/MM/yyyy' }}</strong></span>
+                      </div>
+                    </div>
+
+                    <!-- 3. Détails Académiques & Contacts -->
+                    <div class="grid grid-cols-2 gap-2 text-[10px] bg-[#faf9f6] p-2 border border-[#e5dfd4] rounded-xs">
+                      <div>
+                        <span class="block text-slate-400 font-bold uppercase text-[8px] tracking-wider">Série & Option</span>
+                        <span class="font-bold text-slate-700 truncate block mt-0.5">
+            {{ candidat.serie }} — {{ candidat.option }}
+          </span>
+                      </div>
+                      <div>
+                        <span class="block text-slate-400 font-bold uppercase text-[8px] tracking-wider">Téléphones</span>
+                        <span class="font-bold text-slate-700 block mt-0.5">{{ candidat.phone }}</span>
+                        @if (candidat.tutorPhone) {
+                          <span class="font-medium text-slate-500 block text-[9px]">Tut: {{ candidat.tutorPhone }}</span>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- 4. Actions Carte Mobile -->
+                    <div class="pt-1 flex items-center justify-end gap-1.5 flex-wrap">
+                      <button *hasPermission="'PERM_UPDATE_CANDIDATE'"
+                              (click)="editCandidate(candidat)"
+                              title="Modifier les informations du candidat"
+                              class="px-2.5 py-1 bg-white text-slate-700 border border-[#e5dfd4] hover:bg-[#f8f6f2] text-[10px] font-bold uppercase flex items-center gap-1.5 transition-colors cursor-pointer">
+                        <i class="fas fa-edit text-slate-500 text-[11px]"></i>
+                        <span>Document</span>
+                      </button>
+
+                      @if (candidat.status === Status.REGISTERED_AND_PAYMENT || candidat.status === Status.PAYMENT_ONLY) {
+                        <button *hasPermission="'PERM_UPDATE_CANDIDATE'"
+                                (click)="editPayment(candidat)"
+                                title="Modifier les informations de paiement"
+                                class="px-2.5 py-1 bg-white text-blue-800 border border-blue-200 hover:bg-blue-50 text-[10px] font-bold uppercase flex items-center gap-1.5 transition-colors cursor-pointer">
+                          <i class="fas fa-receipt text-blue-600 text-[11px]"></i>
+                          <span>Paiement</span>
+                        </button>
+                      }
+
+                      @if (candidat.status !== Status.REGISTERED_AND_PAYMENT && candidat.status !== Status.PAYMENT_ONLY) {
+                        <button *hasPermission="'PERM_UPDATE_CANDIDATE'"
+                                (click)="savePayment(candidat)"
+                                title="Enregistrer le paiement"
+                                class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white text-[10px] font-bold uppercase flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs">
+                          <i class="fas fa-credit-card text-emerald-200 text-[11px]"></i>
+                          <span>Payer</span>
+                        </button>
+                      }
+
+                      <button *hasPermission="'PERM_DELETE_CANDIDATE'"
+                              (click)="delete(candidat)"
+                              title="Supprimer ce candidat"
+                              class="px-2 py-1 bg-white text-red-700 border border-red-200 hover:bg-red-50 text-[10px] font-bold uppercase flex items-center gap-1 transition-colors cursor-pointer">
+                        <i class="fas fa-trash text-red-600 text-[11px]"></i>
+                        <span>Supprimer</span>
+                      </button>
+                    </div>
+
+                  </div>
+                } @empty {
+                  <div class="p-8 text-center text-slate-400 text-xs font-bold uppercase tracking-widest bg-white">
+                    Aucun candidat ne correspond à ces critères.
+                  </div>
+                }
+              </div>
+
+
+              <!-- ========================================================================= -->
+                <!-- 2. VUE TABLETTE : Grille de Cartes Structurées (Visibles de sm à lg)       -->
+                <!-- ========================================================================= -->
+              <div class="hidden sm:grid lg:hidden grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-[#f8f6f2]/30">
+                @for (candidat of candidates(); track candidat.id || candidat.numero) {
+                  <div class="bg-white border border-[#e5dfd4] p-4 rounded-xs shadow-xs flex flex-col justify-between space-y-3 hover:border-[#1a4231]/30 transition-all">
+
+                    <!-- En-tête : Numéro, Nationalité & Statut -->
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <div class="flex items-center gap-2">
+          <span class="font-mono font-black text-xs text-[#1a4231] bg-[#f8f6f2] px-2 py-0.5 border border-[#e5dfd4] rounded-xs">
+            N° {{ candidat.numero }}
+          </span>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+            {{ candidat.nationality }}
+          </span>
+                      </div>
+
+                      <div>
+                        @switch (candidat.status) {
+                          @case (Status.REGISTERED_AND_PAYMENT) {
+                            <span class="px-2 py-0.5 bg-emerald-100 border border-emerald-300 text-emerald-800 text-[9px] font-black uppercase rounded-xs">Inscrit & Payé</span>
+                          }
+                          @case (Status.PAYMENT_ONLY) {
+                            <span class="px-2 py-0.5 bg-blue-100 border border-blue-300 text-blue-800 text-[9px] font-black uppercase rounded-xs">Payé Uniquement</span>
+                          }
+                          @case (Status.REGISTERED_ONLY) {
+                            <span class="px-2 py-0.5 bg-purple-100 border border-purple-300 text-purple-800 text-[9px] font-black uppercase rounded-xs">Inscrit Uniquement</span>
+                          }
+                          @default {
+                            <span class="px-2 py-0.5 bg-amber-100 border border-amber-300 text-amber-800 text-[9px] font-black uppercase rounded-xs">En Attente</span>
+                          }
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Info Principales -->
+                    <div class="space-y-1.5">
+                      <h4 class="text-xs font-black uppercase text-slate-800 tracking-wide">
+                        {{ candidat.lastName }} {{ candidat.firstName }}
+                      </h4>
+                      <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-600">
+                        <div><span class="text-slate-400 text-[10px] font-semibold block">Né(e) le :</span> {{ candidat.birthDate | date:'dd/MM/yyyy' }} ({{ candidat.gender }})</div>
+                        <div><span class="text-slate-400 text-[10px] font-semibold block">Inscrit le :</span> {{ candidat.enrolmentDate | date:'dd/MM/yyyy' }}</div>
+                      </div>
+                    </div>
+
+                    <!-- Détails Académiques et Contacts -->
+                    <div class="grid grid-cols-2 gap-2 text-[10px] bg-[#faf9f6] p-2 border border-[#e5dfd4] rounded-xs">
+                      <div>
+                        <span class="block text-slate-400 font-bold uppercase text-[8px] tracking-wider">Série / Cycle</span>
+                        <span class="font-bold text-slate-700 block mt-0.5">{{ candidat.serie }}</span>
+                        <span class="text-slate-500 font-medium block">
+            @switch (candidat.option) {
+              @case (Cycle.WORKS_ENGINEERING) { INGT }
+              @case (Cycle.DESIGN_ENGINEERING) { INGC }
+              @default { {{ candidat.option }} }
+            }
+          </span>
+                      </div>
+                      <div>
+                        <span class="block text-slate-400 font-bold uppercase text-[8px] tracking-wider">Téléphones</span>
+                        <span class="font-bold text-slate-700 block mt-0.5">{{ candidat.phone }}</span>
+                        @if (candidat.tutorPhone) {
+                          <span class="font-medium text-slate-500 block">Tut: {{ candidat.tutorPhone }}</span>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Barre d'Actions -->
+                    <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
+                      <button *hasPermission="'PERM_UPDATE_CANDIDATE'"
+                              (click)="editCandidate(candidat)"
+                              title="Modifier les informations"
+                              class="px-2.5 py-1 bg-white text-slate-700 border border-[#e5dfd4] hover:bg-[#f8f6f2] text-[10px] font-bold uppercase flex items-center gap-1.5 transition-colors cursor-pointer">
+                        <i class="fas fa-edit text-slate-500 text-[11px]"></i>
+                        <span>Document</span>
+                      </button>
+
+                      @if (candidat.status === Status.REGISTERED_AND_PAYMENT || candidat.status === Status.PAYMENT_ONLY) {
+                        <button *hasPermission="'PERM_UPDATE_CANDIDATE'"
+                                (click)="editPayment(candidat)"
+                                title="Modifier le paiement"
+                                class="px-2.5 py-1 bg-white text-blue-800 border border-blue-200 hover:bg-blue-50 text-[10px] font-bold uppercase flex items-center gap-1.5 transition-colors cursor-pointer">
+                          <i class="fas fa-receipt text-blue-600 text-[11px]"></i>
+                          <span>Paiement</span>
+                        </button>
+                      }
+
+                      @if (candidat.status !== Status.REGISTERED_AND_PAYMENT && candidat.status !== Status.PAYMENT_ONLY) {
+                        <button *hasPermission="'PERM_UPDATE_CANDIDATE'"
+                                (click)="savePayment(candidat)"
+                                title="Enregistrer le paiement"
+                                class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white text-[10px] font-bold uppercase flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs">
+                          <i class="fas fa-credit-card text-emerald-200 text-[11px]"></i>
+                          <span>Payer</span>
+                        </button>
+                      }
+
+                      <button *hasPermission="'PERM_DELETE_CANDIDATE'"
+                              (click)="delete(candidat)"
+                              title="Supprimer"
+                              class="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all cursor-pointer">
+                        <i class="fas fa-trash text-xs"></i>
+                      </button>
+                    </div>
+
+                  </div>
+                } @empty {
+                  <div class="col-span-full p-12 text-center text-slate-400 text-xs font-bold uppercase tracking-widest bg-white border border-[#e5dfd4]">
+                    Aucun candidat ne correspond à ces critères.
+                  </div>
+                }
+              </div>
+
+
+              <!-- ========================================================================= -->
+                <!-- 3. VUE DESKTOP : Tableau Classique (Visible uniquement sur écran >= lg)    -->
+                <!-- ========================================================================= -->
+              <div class="hidden lg:block overflow-x-auto min-h-[390px]">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                  <tr class="bg-[#f8f6f2] border-b border-[#e5dfd4] text-[9px] font-black text-[#1a4231] uppercase tracking-widest sticky top-0 z-10">
+                    <th class="p-3">N°</th>
+                    <th class="p-3">Enr N°</th>
+                    <th class="p-3">Enr D</th>
+                    <th class="p-3">Nom & Prénom</th>
+                    <th class="p-3">Date Nais.</th>
+                    <th class="p-3">Sexe</th>
+                    <th class="p-3">Série</th>
+                    <th class="p-3">Nationalité</th>
+                    <th class="p-3">Option / Cycle</th>
+                    <th class="p-3">Tel</th>
+                    <th class="p-3">Tel tuteur</th>
+                    <th class="p-3">Statut</th>
+                    <th class="p-3 text-right">Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody class="divide-y divide-[#e5dfd4] text-xs">
+                    @for (candidat of candidates(); track candidat.id ) {
+                      <tr class="hover:bg-[#f8f6f2]/50 transition-colors">
+                        <td class="p-3 font-mono font-bold text-[#1a4231] whitespace-nowrap">{{ $index + 1 }}</td>
+                        <td class="p-3 font-mono font-bold text-[#1a4231] whitespace-nowrap">{{ candidat.numero }}</td>
+                        <td class="p-3 font-semibold uppercase whitespace-nowrap">{{ candidat.enrolmentDate | date:'dd/MM/yyyy' }}</td>
+                        <td class="p-3 font-semibold uppercase whitespace-nowrap">{{ candidat.lastName }} {{ candidat.firstName }}</td>
+                        <td class="p-3 font-bold whitespace-nowrap">{{ candidat.birthDate | date:'dd/MM/yyyy' }}</td>
+                        <td class="p-3 font-bold">{{ candidat.gender }}</td>
+                        <td class="p-3 whitespace-nowrap">
+            <span class="px-2 py-0.5 bg-[#f8f6f2] border border-[#e5dfd4] text-[10px] font-bold">
+              {{ candidat.serie }}
+            </span>
+                        </td>
+                        <td class="p-3">{{ candidat.nationality }}</td>
+                        <td class="p-3 font-medium text-[10px] whitespace-nowrap">
+                          @switch (candidat.option) {
+                            @case (Cycle.WORKS_ENGINEERING) {
+                              <span class="px-2 py-0.5 font-black uppercase">INGT</span>
+                            }
+                            @case (Cycle.DESIGN_ENGINEERING) {
+                              <span class="px-2 py-0.5 font-black uppercase">INGC</span>
+                            }
+                            @default {
+                              <span class="px-2 py-0.5 font-black uppercase">{{ candidat.option }}</span>
+                            }
+                          }
+                        </td>
+                        <td class="p-3 whitespace-nowrap">{{ candidat.phone }}</td>
+                        <td class="p-3 whitespace-nowrap">{{ candidat.tutorPhone }}</td>
+                        <td class="p-3 whitespace-nowrap">
+                          @switch (candidat.status) {
+                            @case (Status.REGISTERED_AND_PAYMENT) {
+                              <span class="px-2 py-0.5 bg-emerald-100 border border-emerald-300 text-emerald-800 text-[9px] font-black uppercase">Inscrit & Payé</span>
+                            }
+                            @case (Status.PAYMENT_ONLY) {
+                              <span class="px-2 py-0.5 bg-blue-100 border border-blue-300 text-blue-800 text-[9px] font-black uppercase">Payé Uniquement</span>
+                            }
+                            @case (Status.REGISTERED_ONLY) {
+                              <span class="px-2 py-0.5 bg-purple-100 border border-purple-300 text-purple-800 text-[9px] font-black uppercase">Inscrit Uniquement</span>
+                            }
+                            @default {
+                              <span class="px-2 py-0.5 bg-amber-100 border border-amber-300 text-amber-800 text-[9px] font-black uppercase">En Attente</span>
+                            }
+                          }
+                        </td>
+
+                        <!-- Actions Desktop -->
+                        <td class="p-3 text-right whitespace-nowrap">
+                          <div class="inline-flex items-center gap-1 justify-end">
+                            <!-- Modifier Informations -->
+                            <button *hasPermission="'PERM_UPDATE_CANDIDATE'"
+                                    (click)="editCandidate(candidat)"
+                                    title="Modifier les informations du candidat"
+                                    class="p-1.5 text-slate-600 hover:text-[#1a4231] hover:bg-[#f8f6f2] border border-transparent hover:border-[#e5dfd4] transition-all cursor-pointer">
+                              <i class="fas fa-edit text-xs"></i>
+                            </button>
+
+                            <!-- Modifier Paiement -->
+                            @if (candidat.status === Status.REGISTERED_AND_PAYMENT || candidat.status === Status.PAYMENT_ONLY) {
+                              <button *hasPermission="'PERM_UPDATE_CANDIDATE'"
+                                      (click)="editPayment(candidat)"
+                                      title="Modifier les détails de paiement"
+                                      class="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 border border-transparent hover:border-blue-200 transition-all cursor-pointer">
+                                <i class="fas fa-receipt text-xs"></i>
+                              </button>
+                            }
+
+                            <!-- Enregistrer Paiement -->
+                            @if (candidat.status !== Status.REGISTERED_AND_PAYMENT && candidat.status !== Status.PAYMENT_ONLY) {
+                              <button *hasPermission="'PERM_UPDATE_CANDIDATE'"
+                                      (click)="savePayment(candidat)"
+                                      title="Enregistrer un nouveau paiement"
+                                      class="px-2 py-1 bg-emerald-700 hover:bg-emerald-800 text-white text-[10px] font-bold uppercase flex items-center gap-1 transition-colors shadow-xs cursor-pointer">
+                                <i class="fas fa-credit-card text-[9px]"></i>
+                                <span>Payer</span>
+                              </button>
+                            }
+
+                            <!-- Supprimer -->
+                            <button *hasPermission="'PERM_DELETE_CANDIDATE'"
+                                    (click)="delete(candidat)"
+                                    title="Supprimer ce candidat"
+                                    class="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all cursor-pointer">
+                              <i class="fas fa-trash text-xs"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    } @empty {
+                      <tr>
+                        <td colspan="13" class="p-12 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+                          Aucun candidat ne correspond à ces critères.
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+            }
+
+            <!-- Composant de Pagination personnalisé (tx-pagination) -->
+            <div class="border-t border-[#e5dfd4] bg-[#faf9f6] p-2 sm:p-3 overflow-x-auto">
+              <tx-pagination
+                [message]="'candidats'"
+                [pageSizeOptions]="[10, 25, 50, 100, 200]"
+                [currentPage]="currentPage()"
+                [totalPages]="totalPages()"
+                [totalElements]="totalElements()"
+                [itemsPerPage]="pageSize()"
+                (pageChanged)="onPageChange($event)"
+                (pageSizeChanged)="onPageSizeChange($event)">
+              </tx-pagination>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<app-edit-candidate
+[isOpen]="isCandidateEditModal()"
+[candidate]="selectedCandidate()"
+(save)="onSave($event)"
+(close)="onClose()"
+/>
+
+<app-register-payment
+  [isOpen]="isPaymentRegisterModal()"
+  [candidateName]="selectedCandidate()?.lastName||''+ selectedCandidate()?.firstName||''"
+  (save)="onRegisterPayment($event)"
+  (close)="onClose()"
+  />
+
+
+
+<app-edit-payment
+  [isOpen]="isEditPaymentModal()"
+  [candidateName]="selectedCandidate()?.lastName||''+ selectedCandidate()?.firstName||''"
+  [payment]="selectedPayment()"
+  (update)="onEditPayment($event)"
+  (close)="onClose()"
+/>

@@ -1,0 +1,48 @@
+@import "tailwindcss";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+@theme {
+  /* ============================================
+     Palette IAI (Inspirée du Logo)
+     ============================================ */
+
+  /* Vert Sombre (Dominante - Texte & Titres) */
+  /* Extrait directement du texte "Institut Africain d'Informatique" */
+  --color-iai-green-900: #1a4231; /* Le vert très sombre d'origine */
+  --color-iai-green-700: #255c45; /* Une nuance légèrement plus claire pour les états hover/H2 */
+  --color-iai-green-500: #31785a; /* Pour les H3/Liens */
+  --color-iai-green-100: #d1e7dd; /* Un vert très pâle pour les fonds/bordures subtiles */
+  --color-iai-green-50:  #eaf5f0; /* Un fond de code encore plus subtil */
+
+  /* Beige/Or (Secondaire - Fonds & Structure) */
+  /* Extrait du fond texturé du logo */
+  --color-iai-beige-500: #cbbba1; /* Le beige de base du logo */
+  --color-iai-beige-200: #e5dfd4; /* Une nuance plus claire pour les bordures */
+  --color-iai-beige-100: #f1ede6; /* Pour les fonds alternés de tableaux */
+  --color-iai-beige-50:  #f8f6f2; /* Pour le fond global si besoin */
+
+  /* Jaune IAI (Accent - Citations & List markers) */
+  /* Extrait de la partie jaune vif de la sphère centrale */
+  --color-iai-yellow-500: #f9d71c; /* Jaune vif pour l'accentuation */
+  --color-iai-yellow-50:  #fffdeb; /* Jaune très pâle pour le fond des citations */
+}
+
+/* Scrollbar adaptée au thème Beige/Vert */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-iai-beige-100);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-iai-beige-500);
+  border-radius: 0;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-iai-green-700);
+}
+
+

@@ -1,0 +1,417 @@
+<div class="flex h-screen bg-slate-50/50 overflow-hidden">
+  <main class="flex-1 flex flex-col min-w-0">
+    <div class="flex-grow overflow-y-auto flex flex-col">
+      <div class="w-full h-full pb-16 overflow-y-auto p-2 sm:p-0 sm:mb-10">
+        <!-- En-tête compact institutionnel -->
+        <div class="bg-[#1a4231] p-4 text-white border-b-4 border-[#f9d71c] mb-1 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+          <div>
+            <h1 class="text-base sm:text-lg font-black uppercase tracking-widest flex items-center gap-2">
+              <i class="fa-solid fa-chart-pie text-[#f9d71c]"></i>
+              Tableau de bord - Candidats
+            </h1>
+            <p class="text-[10px] sm:text-xs text-[#f9d71c] font-bold uppercase tracking-wider mt-0.5 opacity-90">
+              Statistiques globales des inscriptions et répartitions par genre & option
+            </p>
+          </div>
+
+          <!-- Actions de l'en-tête -->
+          <button
+            type="button"
+            (click)="fetchGlobalStatistics()"
+            [disabled]="isLoading()"
+            title="Actualiser les données"
+            class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-[#f9d71c] border border-[#f9d71c]/40 text-xs font-black uppercase tracking-wider transition-all duration-150 flex items-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+            <i class="fa-solid fa-rotate-right text-[11px]" [class.fa-spin]="isLoading()"></i>
+            <span>Actualiser</span>
+          </button>
+        </div>
+
+        <div class="p-2">
+          <!-- État de chargement -->
+          @if (isLoading()) {
+            <div class="p-8 bg-white border border-[#e5dfd4] text-center text-[#1a4231] font-bold text-xs uppercase tracking-wider my-4 shadow-sm">
+              <i class="fa-solid fa-circle-notch fa-spin mr-2 text-[#f9d71c]"></i> Chargement des statistiques globales...
+            </div>
+          }
+
+          <!-- État d'erreur -->
+          @if (error()) {
+            <div class="p-4 bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center justify-between my-4 shadow-sm">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-circle-exclamation text-rose-600 text-sm"></i>
+                <span>{{ error() }}</span>
+              </div>
+              <button
+                (click)="fetchGlobalStatistics()"
+                class="px-3 py-1 bg-rose-700 text-white font-black uppercase text-[10px] tracking-wider hover:bg-rose-800 cursor-pointer">
+                Réessayer
+              </button>
+            </div>
+          }
+
+          <!-- Contenu du tableau de bord -->
+          @if (!isLoading() && !error() && stats(); as data) {
+            <div class="space-y-4">
+
+              <!-- 4 Cartes de Synthèse KPI -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+
+                <!-- Card 1: Total Candidats -->
+                <div class="bg-white p-3.5 border border-[#e5dfd4] border-l-4 border-l-[#1a4231] shadow-sm flex items-center justify-between">
+                  <div>
+                    <p class="text-[10px] font-black uppercase text-slate-500 tracking-wider">Total Candidats</p>
+                    <h3 class="text-lg font-black text-[#1a4231] mt-0.5">
+                      {{ data.totalStudents | number }}
+                    </h3>
+                  </div>
+                  <div class="w-9 h-9 bg-[#1a4231]/10 text-[#1a4231] rounded-none flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-users"></i>
+                  </div>
+                </div>
+
+                <!-- Card 2: Hommes -->
+                <div class="bg-white p-3.5 border border-[#e5dfd4] border-l-4 border-l-blue-600 shadow-sm flex items-center justify-between">
+                  <div>
+                    <p class="text-[10px] font-black uppercase text-slate-500 tracking-wider">Hommes</p>
+                    <h3 class="text-lg font-black text-blue-950 mt-0.5">
+                      {{ data.totalMaleStudents | number }}
+                    </h3>
+                  </div>
+                  <div class="w-9 h-9 bg-blue-50 text-blue-600 rounded-none flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-mars"></i>
+                  </div>
+                </div>
+
+                <!-- Card 3: Femmes -->
+                <div class="bg-white p-3.5 border border-[#e5dfd4] border-l-4 border-l-pink-500 shadow-sm flex items-center justify-between">
+                  <div>
+                    <p class="text-[10px] font-black uppercase text-slate-500 tracking-wider">Femmes</p>
+                    <h3 class="text-lg font-black text-pink-950 mt-0.5">
+                      {{ data.totalFemaleStudents | number }}
+                    </h3>
+                  </div>
+                  <div class="w-9 h-9 bg-pink-50 text-pink-600 rounded-none flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-venus"></i>
+                  </div>
+                </div>
+
+                <!-- Card 4: Montant Récolté -->
+                <div class="bg-white p-3.5 border border-[#e5dfd4] border-l-4 border-l-[#f9d71c] shadow-sm flex items-center justify-between">
+                  <div>
+                    <p class="text-[10px] font-black uppercase text-slate-500 tracking-wider">Montant Récolté</p>
+                    <h3 class="text-lg font-black text-emerald-800 mt-0.5">
+                      {{ data.totalAmount | currency:'XAF':'symbol':'1.0-0' }}
+                    </h3>
+                  </div>
+                  <div class="w-9 h-9 bg-[#f8f6f2] text-[#1a4231] rounded-none flex items-center justify-center text-sm border border-[#e5dfd4]">
+                    <i class="fa-solid fa-coins"></i>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Répartition par Génie / Option -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                <!-- Génie Télécom (INGT) -->
+                <div class="bg-white border border-[#e5dfd4] p-4 shadow-sm">
+                  <div class="flex items-center justify-between border-b border-[#e5dfd4] pb-2 mb-3">
+                    <h2 class="text-xs font-black text-[#1a4231] uppercase tracking-wider flex items-center gap-2">
+                      <i class="fa-solid fa-tower-cell text-slate-400"></i>
+                      <span>INGENIEUR DES TRAVAUX (INGT)</span>
+                    </h2>
+                    <span class="text-[10px] font-bold text-slate-500 bg-[#f8f6f2] px-2 py-0.5 border border-[#e5dfd4]">
+                    {{ data.totalMaleIngt + data.totalFemaleIngt | number }} candidats
+                  </span>
+                  </div>
+
+                  <div class="space-y-3">
+                    <div class="flex justify-between items-center text-xs font-medium text-slate-700">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-mars text-blue-600"></i>
+                      <span>Hommes</span>
+                    </span>
+                      <span class="font-bold text-slate-900">{{ data.totalMaleIngt | number }}</span>
+                    </div>
+
+                    <div class="flex justify-between items-center text-xs font-medium text-slate-700">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-venus text-pink-600"></i>
+                      <span>Femmes</span>
+                    </span>
+                      <span class="font-bold text-slate-900">{{ data.totalFemaleIngt | number }}</span>
+                    </div>
+
+                    <div class="pt-3 border-t border-dashed border-[#e5dfd4] flex justify-between items-center">
+                      <span class="font-black text-slate-500 uppercase text-[10px] tracking-wider">Total INGT</span>
+                      <span class="font-black text-[#1a4231] text-base">
+                      {{ data.totalMaleIngt + data.totalFemaleIngt | number }}
+                    </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Génie Civil (INGC) -->
+                <div class="bg-white border border-[#e5dfd4] p-4 shadow-sm">
+                  <div class="flex items-center justify-between border-b border-[#e5dfd4] pb-2 mb-3">
+                    <h2 class="text-xs font-black text-[#1a4231] uppercase tracking-wider flex items-center gap-2">
+                      <i class="fa-solid fa-building text-slate-400"></i>
+                      <span>INGENIEUR DE CONCEPTION (INGC)</span>
+                    </h2>
+                    <span class="text-[10px] font-bold text-slate-500 bg-[#f8f6f2] px-2 py-0.5 border border-[#e5dfd4]">
+                    {{ data.totalMaleIngc + data.totalFemaleIngc | number }} candidats
+                  </span>
+                  </div>
+
+                  <div class="space-[#e5dfd4] space-y-3">
+                    <div class="flex justify-between items-center text-xs font-medium text-slate-700">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-mars text-blue-600"></i>
+                      <span>Hommes</span>
+                    </span>
+                      <span class="font-bold text-slate-900">{{ data.totalMaleIngc | number }}</span>
+                    </div>
+
+                    <div class="flex justify-between items-center text-xs font-medium text-slate-700">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-venus text-pink-600"></i>
+                      <span>Femmes</span>
+                    </span>
+                      <span class="font-bold text-slate-900">{{ data.totalFemaleIngc | number }}</span>
+                    </div>
+
+                    <div class="pt-3 border-t border-dashed border-[#e5dfd4] flex justify-between items-center">
+                      <span class="font-black text-slate-500 uppercase text-[10px] tracking-wider">Total INGC</span>
+                      <span class="font-black text-[#1a4231] text-base">
+                      {{ data.totalMaleIngc + data.totalFemaleIngc | number }}
+                    </span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+
+              <div class="bg-white border border-[#e5dfd4] shadow-xs">
+
+                <!-- En-tête Commun à toutes les vues -->
+                <div class="p-4 bg-[#f8f6f2] border-b border-[#e5dfd4] flex justify-between items-center">
+                  <h2 class="text-xs font-black text-[#1a4231] uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-day text-[#f9d71c]"></i>
+                    <span>Historique & Statistiques Journalières</span>
+                  </h2>
+                  <span class="text-[10px] font-bold text-slate-500 bg-white px-2 py-0.5 border border-[#e5dfd4]">
+      {{ data.darlingStats.length }} jour(s) enregistré(s)
+    </span>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- 1. VUE MOBILE : Liste de cartes (Visible uniquement sur écran < sm)       -->
+                <!-- ========================================================================= -->
+                <div class="block sm:hidden divide-y divide-[#e5dfd4]">
+                  @for (day of data.darlingStats; track day.date) {
+                    <div class="p-3.5 space-y-3 hover:bg-slate-50/50 transition-colors">
+
+                      <!-- Top Carte : Date & Montant -->
+                      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <div class="font-bold text-xs text-slate-900 flex items-center gap-1.5">
+                          <i class="fa-regular fa-clock text-slate-400 text-[11px]"></i>
+                          <span>{{ day.date | date:'dd/MM/yyyy' }}</span>
+                        </div>
+                        <div class="font-black text-xs text-emerald-800">
+                          @if (day.totalAmount === 25000){(1 / {{day.totalStudents}})}
+                          @else{({{day.totalAmount/25000}}/{{day.totalStudents}})}
+                          {{ day.totalAmount | currency:'XAF':'symbol':'1.0-0' }}
+                        </div>
+                      </div>
+
+                      <!-- Chiffres Clés Synthétiques -->
+                      <div class="grid grid-cols-3 gap-2 text-center bg-[#faf9f6] p-2 border border-[#e5dfd4] rounded-xs">
+                        <div>
+                          <span class="block text-[8px] font-bold uppercase text-slate-400 tracking-wider">Total</span>
+                          <span class="font-black text-xs text-[#1a4231]">{{ day.totalStudents | number }}</span>
+                        </div>
+                        <div>
+                          <span class="block text-[8px] font-bold uppercase text-slate-400 tracking-wider">Hommes</span>
+                          <span class="font-bold text-xs text-blue-900">{{ day.totalMaleStudents | number }}</span>
+                        </div>
+                        <div>
+                          <span class="block text-[8px] font-bold uppercase text-slate-400 tracking-wider">Femmes</span>
+                          <span class="font-bold text-xs text-pink-900">{{ day.totalFemaleStudents | number }}</span>
+                        </div>
+                      </div>
+
+                      <!-- Détails Répartition INGT / INGC -->
+                      <div class="grid grid-cols-2 gap-2 text-[10px]">
+                        <div class="flex items-center justify-between bg-slate-50 p-2 border border-slate-200/60 rounded-xs">
+                          <span class="font-bold text-slate-600 uppercase text-[9px]">INGT :</span>
+                          <span class="font-bold">
+              <span class="text-blue-700">{{ day.totalMaleIngt }} H</span>
+              <span class="text-slate-300 mx-1">/</span>
+              <span class="text-pink-700">{{ day.totalFemaleIngt }} F</span>
+            </span>
+                        </div>
+                        <div class="flex items-center justify-between bg-slate-50 p-2 border border-slate-200/60 rounded-xs">
+                          <span class="font-bold text-slate-600 uppercase text-[9px]">INGC :</span>
+                          <span class="font-bold">
+              <span class="text-blue-700">{{ day.totalMaleIngc }} H</span>
+              <span class="text-slate-300 mx-1">/</span>
+              <span class="text-pink-700">{{ day.totalFemaleIngc }} F</span>
+            </span>
+                        </div>
+                      </div>
+
+                    </div>
+                  } @empty {
+                    <div class="p-8 text-center text-slate-400 text-xs italic">
+                      Aucune donnée journalière disponible pour le moment.
+                    </div>
+                  }
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- 2. VUE TABLETTE : Grille de cartes (Visibles de sm à lg)                 -->
+                <!-- ========================================================================= -->
+                <div class="hidden sm:grid lg:hidden grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-[#f8f6f2]/30">
+                  @for (day of data.darlingStats; track day.date) {
+                    <div class="bg-white border border-[#e5dfd4] p-3.5 rounded-xs shadow-xs space-y-3 flex flex-col justify-between hover:border-[#1a4231]/30 transition-all">
+
+                      <!-- En-tête Carte Tablette -->
+                      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+          <span class="font-bold text-xs text-slate-900 flex items-center gap-1.5">
+            <i class="fa-regular fa-clock text-slate-400 text-[11px]"></i>
+            {{ day.date | date:'dd/MM/yyyy' }}
+          </span>
+                        <span class="font-black text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 border border-emerald-200 rounded-xs">
+            @if (day.totalAmount === 25000){(1 / {{day.totalStudents}})}
+            @else{({{day.totalAmount/25000}}/{{day.totalStudents}})}
+                          {{ day.totalAmount | currency:'XAF':'symbol':'1.0-0' }}
+          </span>
+                      </div>
+
+                      <!-- Totaux Effectifs -->
+                      <div class="grid grid-cols-3 gap-2 text-center bg-[#faf9f6] p-2 border border-[#e5dfd4] rounded-xs">
+                        <div>
+                          <span class="block text-[8px] font-bold uppercase text-slate-400 tracking-wider">Inscrits</span>
+                          <span class="font-black text-sm text-[#1a4231]">{{ day.totalStudents | number }}</span>
+                        </div>
+                        <div>
+                          <span class="block text-[8px] font-bold uppercase text-slate-400 tracking-wider">Hommes</span>
+                          <span class="font-bold text-xs text-blue-900">{{ day.totalMaleStudents | number }}</span>
+                        </div>
+                        <div>
+                          <span class="block text-[8px] font-bold uppercase text-slate-400 tracking-wider">Femmes</span>
+                          <span class="font-bold text-xs text-pink-900">{{ day.totalFemaleStudents | number }}</span>
+                        </div>
+                      </div>
+
+                      <!-- Répartition INGT et INGC -->
+                      <div class="space-y-1.5 text-[10px]">
+                        <div class="flex items-center justify-between bg-slate-50 px-2.5 py-1.5 border border-slate-200/60 rounded-xs">
+                          <span class="font-bold text-slate-500 uppercase text-[9px]">Cycle INGT (H/F) :</span>
+                          <span class="font-bold">
+              <span class="text-blue-700">{{ day.totalMaleIngt }} Hommes</span>
+              <span class="text-slate-300 mx-1.5">|</span>
+              <span class="text-pink-700">{{ day.totalFemaleIngt }} Femmes</span>
+            </span>
+                        </div>
+                        <div class="flex items-center justify-between bg-slate-50 px-2.5 py-1.5 border border-slate-200/60 rounded-xs">
+                          <span class="font-bold text-slate-500 uppercase text-[9px]">Cycle INGC (H/F) :</span>
+                          <span class="font-bold">
+              <span class="text-blue-700">{{ day.totalMaleIngc }} Hommes</span>
+              <span class="text-slate-300 mx-1.5">|</span>
+              <span class="text-pink-700">{{ day.totalFemaleIngc }} Femmes</span>
+            </span>
+                        </div>
+                      </div>
+
+                    </div>
+                  } @empty {
+                    <div class="col-span-full p-8 text-center text-slate-400 text-xs italic bg-white border border-[#e5dfd4]">
+                      Aucune donnée journalière disponible pour le moment.
+                    </div>
+                  }
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- 3. VUE DESKTOP : Tableau classique (Visible uniquement sur écran >= lg)   -->
+                <!-- ========================================================================= -->
+                <div class="hidden lg:block overflow-x-auto">
+                  <table class="w-full text-left text-xs text-slate-700 border-collapse">
+                    <thead>
+                    <tr class="bg-slate-100 text-[#1a4231] uppercase text-[10px] font-black tracking-wider border-b border-[#e5dfd4]">
+                      <th class="py-2.5 px-3">Date</th>
+                      <th class="py-2.5 px-3 text-center">Inscrits</th>
+                      <th class="py-2.5 px-3 text-center">Hommes</th>
+                      <th class="py-2.5 px-3 text-center">Femmes</th>
+                      <th class="py-2.5 px-3 text-center">INGT (H/F)</th>
+                      <th class="py-2.5 px-3 text-center">INGC (H/F)</th>
+                      <th class="py-2.5 px-3 text-right">Montant Récolté</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#e5dfd4]">
+                      @for (day of data.darlingStats; track day.date) {
+                        <tr class="hover:bg-slate-50 transition-colors">
+                          <!-- Date -->
+                          <td class="py-2.5 px-3 font-bold text-slate-900 whitespace-nowrap">
+                            <i class="fa-regular fa-clock text-slate-400 mr-1.5 text-[11px]"></i>
+                            {{ day.date | date:'dd/MM/yyyy' }}
+                          </td>
+
+                          <!-- Total Inscrits -->
+                          <td class="py-2.5 px-3 text-center font-black text-[#1a4231]">
+                            {{ day.totalStudents | number }}
+                          </td>
+
+                          <!-- Hommes -->
+                          <td class="py-2.5 px-3 text-center text-blue-900 font-semibold">
+                            {{ day.totalMaleStudents | number }}
+                          </td>
+
+                          <!-- Femmes -->
+                          <td class="py-2.5 px-3 text-center text-pink-900 font-semibold">
+                            {{ day.totalFemaleStudents | number }}
+                          </td>
+
+                          <!-- Répartition INGT -->
+                          <td class="py-2.5 px-3 text-center text-slate-600 whitespace-nowrap">
+                            <span class="text-blue-700 font-medium">{{ day.totalMaleIngt }}</span>
+                            <span class="mx-1 text-slate-300">/</span>
+                            <span class="text-pink-700 font-medium">{{ day.totalFemaleIngt }}</span>
+                          </td>
+
+                          <!-- Répartition INGC -->
+                          <td class="py-2.5 px-3 text-center text-slate-600 whitespace-nowrap">
+                            <span class="text-blue-700 font-medium">{{ day.totalMaleIngc }}</span>
+                            <span class="mx-1 text-slate-300">/</span>
+                            <span class="text-pink-700 font-medium">{{ day.totalFemaleIngc }}</span>
+                          </td>
+
+                          <!-- Montant -->
+                          <td class="py-2.5 px-3 text-right font-black text-emerald-800 whitespace-nowrap">
+                            @if (day.totalAmount === 25000){(1 / {{day.totalStudents}})}
+                            @else{({{day.totalAmount/25000}}/{{day.totalStudents}})}  {{ day.totalAmount | currency:'XAF':'symbol':'1.0-0' }}
+                          </td>
+                        </tr>
+                      } @empty {
+                        <tr>
+                          <td colspan="7" class="py-6 text-center text-slate-400 text-xs italic">
+                            Aucune donnée journalière disponible pour le moment.
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+
+            </div>
+          }
+        </div>
+
+
+      </div>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,135 @@
+<!-- Created with Jaspersoft Studio version 7.0.6.final using JasperReports Library version 7.0.6-5d2a603fdc6b3db8f842a83383e594f41891534d  -->
+<jasperReport name="CandidateReport" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a1f8e3b2-1d5e-4c7b-8910-1a2b3c4d5e6f">
+	<parameter name="title" class="java.lang.String"/>
+	<parameter name="description" class="java.lang.String"/>
+	<parameter name="leftLogo" class="java.io.InputStream"/>
+	<parameter name="rightLogo" class="java.io.InputStream"/>
+	<parameter name="year" class="java.lang.String"/>
+	<field name="numeroTable" class="java.lang.String"/>
+	<field name="lastName" class="java.lang.String"/>
+	<field name="firstName" class="java.lang.String"/>
+	<field name="gender" class="java.lang.String"/>
+	<field name="birthDate" class="java.lang.String"/>
+	<field name="nationality" class="java.lang.String"/>
+	<field name="option" class="java.lang.String"/>
+	<background splitType="Stretch"/>
+	<title height="140" splitType="Stretch">
+		<element kind="image" uuid="15b931b3-0a89-4544-9f2f-9c3a91b37208" x="0" y="0" width="80" height="80" scaleImage="RetainShape" onErrorType="Blank" hImageAlign="Left" vImageAlign="Middle">
+			<expression><![CDATA[$P{leftLogo}]]></expression>
+		</element>
+		<element kind="staticText" uuid="2916b76d-e52c-4964-ac44-c0f23c94f11f" x="85" y="0" width="385" height="16" fontName="SansSerif" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[INSTITUT AFRICAIN D'INFORMATIQUE]]></text>
+		</element>
+		<element kind="staticText" uuid="67752ed6-759b-45bf-af2b-13723b8fd01c" x="85" y="16" width="385" height="12" fontName="SansSerif" fontSize="8.0" italic="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Établissement Inter-États d'Enseignement Supérieur]]></text>
+		</element>
+		<element kind="staticText" uuid="99798109-f32a-48a4-80f2-7a3cc1635961" x="85" y="28" width="385" height="12" fontName="SansSerif" fontSize="7.0" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[BP: 2263 Libreville (Gabon) - Tél: (241) 77 70 55 / 00, (241) 60 43 46 44]]></text>
+		</element>
+		<element kind="staticText" uuid="bcdcbf41-01e3-4e18-aea4-267317d419e0" x="85" y="40" width="385" height="12" fontName="SansSerif" fontSize="7.0" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Site web: www.iai-siege.com - E-mail: contact@iai-siege.com]]></text>
+		</element>
+		<element kind="textField" uuid="6a240f3b-90e1-4939-9474-6b467bba8bcf" x="85" y="54" width="385" height="14" fontName="SansSerif" fontSize="8.0" blankWhenNull="true" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA["Année académique: " + ($P{year} != null ? $P{year} : "")]]></expression>
+		</element>
+		<element kind="image" uuid="fbcd0515-abd5-4640-879c-335faaff34b7" x="475" y="0" width="80" height="80" scaleImage="RetainShape" onErrorType="Blank" hImageAlign="Right" vImageAlign="Middle">
+			<expression><![CDATA[$P{rightLogo}]]></expression>
+		</element>
+		<element kind="line" uuid="876e5e2a-b69e-4698-8e1a-9548c305568d" x="0" y="85" width="555" height="1">
+			<pen lineWidth="1.5" lineColor="#1A4231"/>
+		</element>
+		<element kind="textField" uuid="f75ee6b1-68a2-4bd0-9c33-c5b46606a81d" x="0" y="95" width="555" height="20" fontName="SansSerif" fontSize="12.0" blankWhenNull="true" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA[$P{title} != null ? $P{title}.toUpperCase() : "LISTE DES CANDIDATS"]]></expression>
+		</element>
+		<element kind="textField" uuid="ebdebe80-ca41-454e-b029-05755e8e65ee" x="0" y="115" width="555" height="15" fontName="SansSerif" fontSize="8.0" blankWhenNull="true" italic="true" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA[$P{description}]]></expression>
+		</element>
+	</title>
+	<columnHeader height="22" splitType="Stretch">
+		<element kind="rectangle" uuid="4840a46e-4c2d-4c76-9685-f5caab9d8966" x="0" y="0" width="555" height="22" backcolor="#1A4231">
+			<pen lineWidth="0.5" lineColor="#1A4231"/>
+		</element>
+		<element kind="staticText" uuid="a65e8a24-4ce6-4e71-828d-59f2b3225760" x="0" y="0" width="55" height="22" forecolor="#FFFFFF" fontName="SansSerif" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[N° TABLE]]></text>
+		</element>
+		<element kind="staticText" uuid="0e27ed05-8240-4d70-9f3b-a28093f2c181" x="55" y="0" width="95" height="22" forecolor="#FFFFFF" fontName="SansSerif" fontSize="8.0" bold="true" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[NOM]]></text>
+			<box leftPadding="4"/>
+		</element>
+		<element kind="staticText" uuid="a316dd7a-d3b4-4d60-91fc-8a3bef358279" x="150" y="0" width="125" height="22" forecolor="#FFFFFF" fontName="SansSerif" fontSize="8.0" bold="true" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[PRÉNOMS]]></text>
+			<box leftPadding="4"/>
+		</element>
+		<element kind="staticText" uuid="e62a15c8-1122-4522-8712-8815143a5bc0" x="275" y="0" width="35" height="22" forecolor="#FFFFFF" fontName="SansSerif" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[SEXE]]></text>
+		</element>
+		<element kind="staticText" uuid="b0c4bf94-b9ba-4a58-8ef1-b63605dad139" x="310" y="0" width="70" height="22" forecolor="#FFFFFF" fontName="SansSerif" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[DATE NAISS.]]></text>
+		</element>
+		<element kind="staticText" uuid="e46267d3-6308-4043-b051-f68730ebbe24" x="380" y="0" width="85" height="22" forecolor="#FFFFFF" fontName="SansSerif" fontSize="8.0" bold="true" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[NATIONALITÉ]]></text>
+			<box leftPadding="4"/>
+		</element>
+		<element kind="staticText" uuid="5b7c0362-3fd2-45c4-8c15-4ee9cfacedaa" x="465" y="0" width="90" height="22" forecolor="#FFFFFF" fontName="SansSerif" fontSize="8.0" bold="true" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[NIVEAU / OPTION]]></text>
+			<box leftPadding="4"/>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<element kind="textField" uuid="161513a2-5981-4ea6-aae9-1a9391177f33" x="0" y="0" width="55" height="20" fontName="SansSerif" fontSize="8.0" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{numeroTable}]]></expression>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5" lineColor="#E5DFD4"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="3c3b2836-bf0f-4e7b-af14-b47ae462d39d" x="55" y="0" width="95" height="20" fontName="SansSerif" fontSize="8.0" blankWhenNull="true" bold="true" hTextAlign="Left" vTextAlign="Middle">
+				<expression><![CDATA[$F{lastName}]]></expression>
+				<box leftPadding="4" rightPadding="2">
+					<pen lineWidth="0.5" lineColor="#E5DFD4"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="38d249dc-31a9-4748-8db7-b5f854484d2f" x="150" y="0" width="125" height="20" fontName="SansSerif" fontSize="8.0" blankWhenNull="true" hTextAlign="Left" vTextAlign="Middle">
+				<expression><![CDATA[$F{firstName}]]></expression>
+				<box leftPadding="4" rightPadding="2">
+					<pen lineWidth="0.5" lineColor="#E5DFD4"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="a63b2100-2d83-4a12-8822-441112223334" x="275" y="0" width="35" height="20" fontName="SansSerif" fontSize="8.0" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{gender}]]></expression>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5" lineColor="#E5DFD4"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="95669876-53af-408b-9d12-9486c8df3e1d" x="310" y="0" width="70" height="20" fontName="SansSerif" fontSize="8.0" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{birthDate}]]></expression>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5" lineColor="#E5DFD4"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="3240c3a3-3c78-4c51-9145-e63c40cf037b" x="380" y="0" width="85" height="20" fontName="SansSerif" fontSize="8.0" blankWhenNull="true" hTextAlign="Left" vTextAlign="Middle">
+				<expression><![CDATA[$F{nationality}]]></expression>
+				<box leftPadding="4" rightPadding="2">
+					<pen lineWidth="0.5" lineColor="#E5DFD4"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="a91fdcb5-23aa-49c5-a524-9d2ab5631763" x="465" y="0" width="90" height="20" fontName="SansSerif" fontSize="8.0" blankWhenNull="true" hTextAlign="Left" vTextAlign="Middle">
+				<expression><![CDATA[$F{option}]]></expression>
+				<box leftPadding="4" rightPadding="2">
+					<pen lineWidth="0.5" lineColor="#E5DFD4"/>
+				</box>
+			</element>
+		</band>
+	</detail>
+	<pageFooter height="20" splitType="Stretch">
+		<element kind="textField" uuid="bc2d31f5-1bc2-4310-b0d5-9bf637b48942" x="0" y="0" width="200" height="20" fontName="SansSerif" fontSize="7.0" pattern="dd/MM/yyyy HH:mm" hTextAlign="Left" vTextAlign="Middle">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="textField" uuid="36e9edc9-13aa-4438-8325-d83973b64e81" x="355" y="0" width="160" height="20" fontName="SansSerif" fontSize="7.0" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA["Page " + $V{PAGE_NUMBER} + " sur "]]></expression>
+		</element>
+		<element kind="textField" uuid="5020a4fe-b6c4-4c70-8eb8-3eed18adcf3e" x="515" y="0" width="40" height="20" fontName="SansSerif" fontSize="7.0" evaluationTime="Report" hTextAlign="Left" vTextAlign="Middle">
+			<expression><![CDATA[$V{PAGE_NUMBER}]]></expression>
+		</element>
+	</pageFooter>
+</jasperReport>

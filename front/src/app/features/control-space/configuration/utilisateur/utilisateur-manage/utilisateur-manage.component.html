@@ -1,0 +1,89 @@
+<tx-modal-template
+  [isOpen]="isOpen"
+  [title]="user ? 'Mise à jour Utilisateur' : 'Nouvel Utilisateur'"
+  [description]="user ? 'Édition des privilèges et accès ID: ' + user.id : 'Création d\'un nouvel accès système'"
+  [validateLabel]="user ? 'Appliquer les modifications' : 'Créer l\'accès'"
+  (close)="close.emit()"
+  (validate)="onSubmit()"
+>
+  <form [formGroup]="userForm" class="flex flex-col md:flex-row h-full divide-x divide-slate-200">
+
+    <div class="flex-1 p-2 space-y-2">
+      <div class="flex items-center space-x-2 mb-4">
+        <i class="fas fa-id-card text-brand-orange-500 text-xs"></i>
+        <span class="text-[10px] font-black text-brand-blue-900 uppercase tracking-widest text-center">Identité & Système</span>
+      </div>
+
+      <div class="grid grid-cols-1 gap-1">
+        <div class="flex flex-col space-y-1">
+          <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Username</label>
+          <input type="text" formControlName="username"
+                 class="border border-slate-200 px-3 py-2 text-xs font-bold text-brand-blue-900 focus:border-brand-orange-500 outline-none bg-slate-50/50">
+        </div>
+        <div class="flex flex-col space-y-1">
+          <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Email</label>
+          <input type="email" formControlName="email"
+                 class="border border-slate-200 px-3 py-2 text-xs font-bold text-brand-blue-900 focus:border-brand-orange-500 outline-none bg-slate-50/50">
+        </div>
+        <div class="flex flex-col space-y-1">
+          <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Prénom</label>
+          <input type="text" formControlName="firstName"
+                 class="border border-slate-200 px-3 py-2 text-xs font-bold text-brand-blue-900 focus:border-brand-orange-500 outline-none">
+        </div>
+        <div class="flex flex-col space-y-1">
+          <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Nom</label>
+          <input type="text" formControlName="lastName"
+                 class="border border-slate-200 px-3 py-2 text-xs font-bold text-brand-blue-900 focus:border-brand-orange-500 outline-none">
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+        <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">État du compte</span>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" formControlName="enabled" class="sr-only peer">
+          <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-blue-900"></div>
+          <span class="ml-3 text-[9px] font-black uppercase text-slate-400 tracking-widest">{{ userForm.value.enabled ? 'Actif' : 'Désactivé' }}</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="w-80 bg-slate-50/50 p-6">
+      <div class="flex items-center space-x-2 mb-4">
+        <i class="fas fa-user-shield text-brand-orange-500 text-xs"></i>
+        <span class="text-[10px] font-black text-brand-blue-900 uppercase tracking-widest">Attribution des Rôles</span>
+      </div>
+
+      <div class="space-y-2 max-h-[40vh] overflow-y-auto custom-scrollbar pr-2">
+        @for (role of allRoles; track role.id) {
+          <div (click)="toggleRole(role)"
+               [class.border-brand-blue-900]="isRoleSelected(role.id!)"
+               [class.bg-white]="isRoleSelected(role.id!)"
+               class="group flex items-center justify-between p-3 border border-slate-200 cursor-pointer transition-all hover:bg-white hover:border-brand-orange-500">
+            <div>
+              <p class="text-[10px] font-black uppercase tracking-tight"
+                 [class.text-brand-blue-900]="isRoleSelected(role.id!)"
+                 [class.text-slate-500]="!isRoleSelected(role.id!)">
+                {{ role.name }}
+              </p>
+              <p class="text-[8px] text-slate-400 font-medium italic">Accès Matrix: Level-{{ $index + 1 }}</p>
+            </div>
+
+            <div [class]="isRoleSelected(role.id!) ? 'bg-brand-orange-500' : 'bg-slate-200'"
+                 class="w-4 h-4 flex items-center justify-center transition-colors">
+              @if (isRoleSelected(role.id!)) {
+                <i class="fas fa-check text-[8px] text-white"></i>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="mt-6 p-3 bg-brand-blue-900/5 border-l-2 border-brand-blue-900">
+        <p class="text-[8px] text-brand-blue-900 font-bold uppercase tracking-widest leading-relaxed">
+          Attention: L'attribution de rôles multiples cumule les privilèges de sécurité.
+        </p>
+      </div>
+    </div>
+
+  </form>
+</tx-modal-template>

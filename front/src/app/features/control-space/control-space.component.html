@@ -1,0 +1,112 @@
+<div class="h-screen flex flex-col bg-[#f8f6f2] font-sans overflow-hidden">
+
+  <nav class="shrink-0 bg-white h-14 flex items-center justify-between px-3 md:px-6 border-b border-[#e5dfd4] z-[100] shadow-sm">
+
+    <!-- Logo + Nav Links -->
+    <div class="flex items-center h-full flex-1 min-w-0 mr-2 md:mr-4">
+
+      <!-- Logo IAI -->
+      <div class="flex items-center space-x-3 mr-3 md:mr-8 shrink-0">
+        <div class="w-8 h-8 flex items-center justify-center overflow-hidden">
+          <img
+            src="assets/images/iai-logo.png"
+            alt="Logo IAI"
+            class="w-full h-full object-contain"
+          />
+        </div>
+        <span class="text-md font-bold tracking-tighter text-[#1a4231] hidden lg:block uppercase">IAI Concours</span>
+      </div>
+
+      <!-- Liens de Navigation Principale -->
+      <div class="flex h-full items-center overflow-x-auto whitespace-nowrap scrollbar-none">
+
+        <!-- 1. Tableau de bord -->
+        <a *hasPermission="'PERM_VIEW_DASHBOARD'"
+           routerLink="/control-space/dashboard"
+           routerLinkActive="!bg-[#1a4231] !text-white border-none shadow-sm"
+           class="flex items-center space-x-2 px-3 md:px-5 h-full text-[11px] font-bold uppercase tracking-wider text-slate-600 hover:bg-[#f8f6f2] transition-all border-b-2 border-transparent shrink-0">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          <span class="hidden md:inline">Tableau de bord</span>
+        </a>
+
+        <!-- 2. Inscription -->
+        <a *hasPermission="'PERM_REGISTER_CANDIDATE'"
+           routerLink="/control-space/register"
+           routerLinkActive="!bg-[#1a4231] !text-white border-none shadow-sm"
+           class="flex items-center space-x-2 px-3 md:px-5 h-full text-[11px] font-bold uppercase tracking-wider text-slate-600 hover:bg-[#f8f6f2] transition-all border-b-2 border-transparent shrink-0">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
+          <span class="hidden md:inline">Inscription</span>
+        </a>
+
+        <!-- 3. Gestion des candidats -->
+        <a *hasPermission="['PERM_VIEW_LISTE', 'PERM_VIEW_CANDIDATE', 'PERM_UPDATE_CANDIDATE', 'PERM_DELETE_CANDIDATE', 'PERM_EXPORT']"
+           routerLink="/control-space/candidates"
+           routerLinkActive="!bg-[#1a4231] !text-white border-none shadow-sm"
+           class="flex items-center space-x-2 px-3 md:px-5 h-full text-[11px] font-bold uppercase tracking-wider text-slate-600 hover:bg-[#f8f6f2] transition-all border-b-2 border-transparent shrink-0">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <span class="hidden md:inline">Gestion des candidats</span>
+        </a>
+
+        <!-- 4. Configuration -->
+        <a *hasPermission="['PERM_CONFIG', 'ROLE_ADMINISTRATOR']"
+           routerLink="/control-space/configuration"
+           routerLinkActive="!bg-[#1a4231] !text-white border-none shadow-sm"
+           class="flex items-center space-x-2 px-3 md:px-5 h-full text-[11px] font-bold uppercase tracking-wider text-slate-600 hover:bg-[#f8f6f2] transition-all border-b-2 border-transparent shrink-0">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <span class="hidden md:inline">Configuration</span>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- Mon Profil & Déconnexion directement dans la barre d'actions (À droite) -->
+    <div class="flex items-center space-x-1 h-full shrink-0 border-l border-[#e5dfd4] pl-2 md:pl-4">
+
+      <!-- 5. Mon Profil -->
+      <a routerLink="/control-space/profile"
+         routerLinkActive="!bg-[#1a4231] !text-white border-none shadow-sm"
+         class="flex items-center space-x-2 px-3 md:px-4 h-full text-[11px] font-bold uppercase tracking-wider text-slate-700 hover:bg-[#f8f6f2] hover:text-[#1a4231] transition-all border-b-2 border-transparent">
+
+        <div class="w-7 h-7 bg-[#f8f6f2] overflow-hidden rounded-full border border-[#e5dfd4] shrink-0">
+          @if (user()?.picture) {
+            <img [src]="user()?.picture |secureImg|async" alt="Profil" class="w-full h-full object-cover">
+          } @else {
+            <div class="w-full h-full flex items-center justify-center bg-[#1a4231] text-white font-bold text-[10px]">
+              {{ authService.getUsername().charAt(0).toUpperCase() }}
+            </div>
+          }
+        </div>
+
+        <div class="text-left hidden xl:block">
+          <p class="text-[10px] font-bold leading-none uppercase">{{ authService.currentUser?.firstName || 'Mon Profil' }}</p>
+        </div>
+      </a>
+
+      <!-- 6. Déconnexion -->
+      <button (click)="logout()"
+              title="Se déconnecter"
+              class="flex items-center space-x-2 px-3 md:px-4 h-full text-[11px] font-bold uppercase tracking-wider text-red-600 hover:bg-red-50 transition-colors">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        <span class="hidden md:inline">Déconnexion</span>
+      </button>
+
+    </div>
+  </nav>
+
+  <main class="flex-1 bg-[#f8f6f2] overflow-hidden flex flex-col min-h-0">
+    <div class="p-0 flex-1 min-h-0 flex flex-col overflow-hidden">
+      <router-outlet />
+    </div>
+  </main>
+</div>

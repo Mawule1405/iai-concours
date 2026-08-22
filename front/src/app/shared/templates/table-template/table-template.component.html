@@ -1,0 +1,117 @@
+<div class="h-full flex flex-col overflow-hidden bg-white shadow-xl border border-[#e5dfd4] animate-in fade-in duration-500">
+
+  <!-- En-tête Principal -->
+  <div class="flex-shrink-0 flex justify-between items-center bg-white border-b border-[#e5dfd4] h-14 z-20">
+    <div class="flex items-center space-x-4 h-full">
+      <div class="h-14 w-14 flex items-center justify-center border-r border-[#e5dfd4] text-[#1a4231] bg-[#f8f6f2]">
+        <i [class]="'fas ' + icon + ' text-lg'"></i>
+      </div>
+
+      <div>
+        <h1 class="text-lg font-black text-[#1a4231] uppercase tracking-tighter leading-none">
+          {{ title }}
+        </h1>
+        <p class="text-[8px] text-[#1a4231]/80 font-black uppercase tracking-[0.2em] mt-0.5 italic">
+          {{ subtitle }}
+        </p>
+      </div>
+    </div>
+
+    <div class="flex h-full">
+      @if (showExport) {
+        <button (click)="export.emit()"
+                class="flex items-center space-x-2 px-6 h-full text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:bg-[#f8f6f2] hover:text-[#1a4231] transition-all border-l border-[#e5dfd4]">
+          <i class="fas fa-file-export"></i>
+          <span>Exporter</span>
+        </button>
+      }
+
+      @if (showCreate) {
+        <button (click)="create.emit()"
+                class="flex items-center space-x-2 bg-[#1a4231] text-[#f9d71c] px-8 h-full text-[10px] font-bold uppercase tracking-widest hover:bg-[#1a4231]/90 transition-all rounded-none group border-l border-[#1a4231]">
+          <svg class="w-4 h-4 transition-transform group-hover:rotate-90 text-[#f9d71c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          <span>{{ createLabel }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Barre de Recherche et Filtres -->
+  <div class="flex-shrink-0 bg-[#f8f6f2] border-b border-[#e5dfd4] px-4 py-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+    <div class="flex items-center space-x-3 flex-1 w-full sm:w-auto">
+      @if (showSearch) {
+        <div class="relative flex items-center bg-white border border-[#e5dfd4] focus-within:border-[#1a4231] transition-all w-full sm:w-72">
+          <input
+            type="text"
+            [(ngModel)]="keyword"
+            (input)="onKeywordChange()"
+            (keyup.enter)="onKeywordChange()"
+            (ngModelChange)="onKeywordChange()"
+            placeholder="RECHERCHE_SYSTEME..."
+            class="bg-transparent text-[10px] font-bold text-[#1a4231] placeholder:text-slate-400 px-3 py-1.5 w-full focus:outline-none uppercase tracking-widest"
+          />
+          @if (keyword) {
+            <button (click)="onClear()" class="px-2 text-slate-400 hover:text-[#1a4231]">
+              <i class="fas fa-times-circle text-xs"></i>
+            </button>
+          }
+        </div>
+      }
+      <div class="flex items-center space-x-2 flex-wrap">
+        <ng-content select="[filters]"></ng-content>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu Principal du Tableau -->
+  <div class="flex-grow overflow-y-auto custom-scrollbar bg-white"
+       [ngClass]="showPagination ? 'h-[67vh]' : 'h-[75vh]'">
+    <ng-content></ng-content>
+  </div>
+
+  <!-- Pagination -->
+  @if (showPagination) {
+    <div class="shrink-0 h-12 bg-[#f8f6f2] border-t border-[#e5dfd4] px-4 flex items-center justify-between">
+      <div class="flex items-center space-x-6">
+        <div class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+          Total: <span class="text-[#1a4231] font-black">{{ totalElements }}</span> entrées
+        </div>
+
+        <div class="relative group border-l border-[#e5dfd4] pl-6 h-full flex items-center">
+          <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mr-3">Affichage :</span>
+          <div class="relative inline-block text-left">
+            <button type="button" class="flex items-center space-x-2 bg-white border border-[#e5dfd4] px-3 py-1 hover:border-[#1a4231] transition-all">
+              <span class="text-[10px] font-black text-[#1a4231] uppercase">{{ pageSize }} lignes</span>
+              <i class="fas fa-chevron-up text-[8px] text-slate-400 group-hover:text-[#1a4231]"></i>
+            </button>
+            <div class="absolute bottom-full left-0 mb-1 w-24 bg-white border border-[#e5dfd4] shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              @for (option of pageSizeOptions; track option) {
+                <button (click)="onPageSizeChange(option)"
+                        class="w-full text-left px-3 py-2 text-[10px] font-black text-slate-600 uppercase hover:bg-[#1a4231] hover:text-[#f9d71c] transition-colors border-b border-[#f8f6f2] last:border-none">
+                  {{ option }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contrôles de Page -->
+      <div class="flex items-center gap-1">
+        <button [disabled]="currentPage === 1" (click)="pageChange.emit(currentPage - 1)"
+                class="w-8 h-8 flex items-center justify-center border border-[#e5dfd4] text-slate-500 hover:bg-white hover:text-[#1a4231] disabled:opacity-30 transition-all text-xs">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="px-4 text-[10px] font-black text-[#1a4231] uppercase tracking-tighter">
+          Page {{ currentPage }} / {{ totalPages }}
+        </div>
+        <button [disabled]="currentPage === totalPages" (click)="pageChange.emit(currentPage + 1)"
+                class="w-8 h-8 flex items-center justify-center border border-[#e5dfd4] text-slate-500 hover:bg-white hover:text-[#1a4231] disabled:opacity-30 transition-all text-xs">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  }
+</div>

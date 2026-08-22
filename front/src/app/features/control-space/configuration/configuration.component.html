@@ -1,0 +1,74 @@
+<div class="flex h-full bg-[#f8f6f2] overflow-hidden">
+
+  <aside
+    [class.w-64]="!isCollapsed"
+    [class.w-20]="isCollapsed"
+    class="flex flex-col border-r border-[#e5dfd4] transition-all duration-300 bg-white h-[calc(100vh-3.5rem)] shadow-sm rounded-none">
+
+    <!-- En-tête de la Sidebar -->
+    <div class="h-14 flex items-center justify-between px-4 bg-[#1a4231] shrink-0 z-20 shadow-md rounded-none relative overflow-hidden">
+      <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#f9d71c]"></div>
+
+      @if (!isCollapsed) {
+        <span class="text-xs font-bold text-white/80 uppercase tracking-widest px-2">Menu</span>
+      }
+      <button (click)="toggleSidebar()"
+              [class.mx-auto]="isCollapsed"
+              class="p-1.5 rounded-none hover:bg-white/10 text-white transition-colors focus:outline-none flex items-center justify-center">
+        <i class="fas fa-angle-double-left text-sm transition-transform duration-300"
+           [class.rotate-180]="isCollapsed"></i>
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto py-2 space-y-6 custom-scrollbar scroll-smooth">
+
+      <!-- SECTION ACCÈS -->
+      <section>
+        @if (!isCollapsed) {
+          <p class="px-6 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Accès</p>
+        }
+        <div class="space-y-1">
+          <!-- Permissions -->
+          <a routerLink="permissions"
+             routerLinkActive="!bg-[#1a4231] !text-[#f9d71c] font-black"
+             [class.justify-center]="isCollapsed" [class.px-0]="isCollapsed"
+             class="flex items-center space-x-3 px-6 py-3 rounded-none text-slate-600 hover:bg-[#f8f6f2] hover:text-[#1a4231] transition-all group">
+            <i class="fas fa-key w-5 text-center flex-shrink-0 text-sm"></i>
+            @if (!isCollapsed) {
+              <span class="font-bold tracking-tight text-[11px] uppercase">Permissions</span>
+            }
+          </a>
+
+          <!-- Roles -->
+          <a routerLink="roles"
+             routerLinkActive="!bg-[#1a4231] !text-[#f9d71c] font-black"
+             [class.justify-center]="isCollapsed" [class.px-0]="isCollapsed"
+             class="flex items-center space-x-3 px-6 py-3 rounded-none text-slate-600 hover:bg-[#f8f6f2] hover:text-[#1a4231] transition-all group">
+            <i class="fas fa-shield-alt w-5 text-center flex-shrink-0 text-sm"></i>
+            @if (!isCollapsed) {
+              <span class="font-bold tracking-tight text-[11px] uppercase">Roles</span>
+            }
+          </a>
+
+          <!-- Utilisateurs -->
+          <a routerLink="users"
+             routerLinkActive="!bg-[#1a4231] !text-[#f9d71c] font-black"
+             [class.justify-center]="isCollapsed" [class.px-0]="isCollapsed"
+             class="flex items-center space-x-3 px-6 py-3 rounded-none text-slate-600 hover:bg-[#f8f6f2] hover:text-[#1a4231] transition-all group">
+            <i class="fas fa-users w-5 text-center flex-shrink-0 text-sm"></i>
+            @if (!isCollapsed) {
+              <span class="font-bold tracking-tight text-[11px] uppercase">Utilisateurs</span>
+            }
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </aside>
+
+  <!-- Zone de Contenu Principal -->
+  <main class="flex-1 flex flex-col overflow-hidden bg-[#f8f6f2] p-0">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

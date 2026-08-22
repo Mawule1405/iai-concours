@@ -1,0 +1,57 @@
+@if (config) {
+  <div class="fixed inset-0 z-[110] flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-[2px] animate-in fade-in duration-300" (click)="cancelled.emit()"></div>
+
+    <!-- Dialogue Box -->
+    <div class="relative bg-white w-full max-w-sm shadow-[0_20px_50px_rgba(0,0,0,0.4)] animate-in zoom-in-95 duration-200 rounded-none overflow-hidden border border-[#e5dfd4]">
+
+      <!-- Header -->
+      <div class="flex-shrink-0 bg-[#1a4231] p-4 relative overflow-hidden">
+        <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#f9d71c]"></div>
+
+        <div class="pl-2">
+          <h3 class="text-[10px] font-black text-white uppercase tracking-[0.3em] leading-none">
+            {{ config.title }}
+          </h3>
+          <p class="text-[8px] text-[#f9d71c] font-bold uppercase tracking-[0.2em] mt-1.5 opacity-90 italic">
+            System Protocol / {{ config.type }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Corps du Message -->
+      <div class="p-8 text-center bg-white">
+        <div [class]="'inline-flex items-center justify-center w-16 h-16 mb-6 border-2 transition-all duration-500 ' + getStyles().border + ' ' + getStyles().color">
+          <i [class]="'fas ' + getStyles().icon + ' text-2xl'"></i>
+        </div>
+
+        <p class="text-[10px] font-bold text-slate-600 uppercase leading-relaxed tracking-wider mb-8 px-4">
+          {{ config.message }}
+        </p>
+
+        <!-- Boutons d'Action -->
+        <div class="flex gap-2">
+          @if (config.type === 'PERMISSION' || config.type === 'WARNING' || config.type === 'TOP_PERMISSION') {
+            <button
+              (click)="cancelled.emit()"
+              class="flex-1 py-3 border border-[#e5dfd4] font-black text-[9px] uppercase tracking-widest text-slate-500 hover:bg-[#f8f6f2] transition-all rounded-none bg-white">
+              {{ config.cancelText || 'ABORT_ACTION' }}
+            </button>
+          }
+
+          <button (click)="confirmed.emit()"
+                  [class]="'flex-1 py-3 text-[#f9d71c] font-black text-[9px] uppercase tracking-widest transition-all shadow-lg active:scale-95 rounded-none ' + getStyles().bg">
+            {{ config.confirmText || 'OK' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Pied de Dialogue -->
+      <div class="bg-[#f8f6f2] px-4 py-2 border-t border-[#e5dfd4] flex justify-between items-center">
+        <span class="text-[7px] font-bold text-slate-500 uppercase tracking-widest">Auth_Token: Verified</span>
+        <div class="w-1.5 h-1.5 rounded-full bg-[#f9d71c] animate-pulse"></div>
+      </div>
+    </div>
+  </div>
+}

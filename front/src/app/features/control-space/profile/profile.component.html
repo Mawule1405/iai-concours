@@ -1,0 +1,199 @@
+<tx-space-template
+  title="Mon Profil"
+  subtitle="Gestion du compte & sécurité"
+  icon="fa-user-gear"
+  [showCreate]="false"
+  [showExport]="false">
+
+  <div class="p-2 sm:p-6 max-w-7xl mx-auto pb-20">
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+
+      <!-- COLONNE GAUCHE : Carte Utilisateur & Navigation -->
+      <div class="md:col-span-1 space-y-4">
+
+        <!-- Bloc Identité & Photo -->
+        <div class="bg-[#f8f6f2] border border-[#e5dfd4] p-5 flex flex-col items-center text-center shadow-sm">
+          <!-- Photo Agrandie -->
+          <div class="relative mb-4">
+            @if (user()?.picture) {
+              <img
+                [src]="user()?.picture | secureImg | async"
+                alt="User Avatar"
+                class="w-28 h-28 sm:w-32 sm:h-32 object-cover border-2 border-[#e5dfd4] bg-white shadow-sm"
+              />
+            } @else {
+              <img
+                [src]="'assets/images/avatar.png'"
+                alt="User Avatar"
+                class="w-28 h-28 sm:w-32 sm:h-32 object-cover border-2 border-[#e5dfd4] bg-white shadow-sm"
+              />
+            }
+
+            <span class="absolute -bottom-1 -right-1 w-5 h-5 border-2 border-white"
+                  [class.bg-emerald-600]="user()?.enabled"
+                  [class.bg-rose-600]="!user()?.enabled"
+                  [title]="user()?.enabled ? 'Compte Actif' : 'Compte Inactif'">
+            </span>
+          </div>
+
+          <!-- Nom & Infos -->
+          <h1 class="text-base font-black text-[#1a4231] uppercase tracking-tight leading-snug">
+            {{ user()?.firstName }} {{ user()?.lastName }}
+          </h1>
+          <p class="text-[11px] font-mono text-slate-500 mt-1">&#64;{{ user()?.username }}</p>
+          <p class="text-[10px] text-slate-500 break-all mt-0.5">{{ user()?.email }}</p>
+
+          <!-- Badges & Statut -->
+          <div class="flex flex-wrap justify-center items-center gap-1.5 mt-3 pt-3 border-t border-[#e5dfd4] w-full">
+            @if (user()?.status) {
+              <span class="px-2 py-0.5 text-[9px] font-bold bg-[#1a4231]/10 text-[#1a4231] border border-[#1a4231]/20 uppercase">
+                {{ user()?.status }}
+              </span>
+            }
+            @for (role of user()?.roles; track role.id || role.name) {
+              <span class="px-2 py-0.5 text-[9px] font-bold bg-[#e5dfd4]/60 text-slate-700 border border-[#e5dfd4] uppercase">
+                {{ role.name }}
+              </span>
+            }
+          </div>
+        </div>
+
+        <!-- Menu des Onglets (Sous la photo) -->
+        <div class="space-y-1">
+          <button
+            (click)="activeTab.set('profile')"
+            [class.!bg-[#1a4231]]="activeTab() === 'profile'"
+            [class.!text-[#f9d71c]]="activeTab() === 'profile'"
+            [class.bg-white]="activeTab() !== 'profile'"
+            [class.text-slate-700]="activeTab() !== 'profile'"
+            class="w-full text-left px-4 py-3 border border-[#e5dfd4] font-bold text-xs uppercase transition-all flex items-center gap-3 shadow-sm hover:border-[#1a4231]">
+            <i class="fas fa-id-card text-sm"></i>
+            Informations
+          </button>
+
+          <button
+            (click)="activeTab.set('password')"
+            [class.!bg-[#1a4231]]="activeTab() === 'password'"
+            [class.!text-[#f9d71c]]="activeTab() === 'password'"
+            [class.bg-white]="activeTab() !== 'password'"
+            [class.text-slate-700]="activeTab() !== 'password'"
+            class="w-full text-left px-4 py-3 border border-[#e5dfd4] font-bold text-xs uppercase transition-all flex items-center gap-3 shadow-sm hover:border-[#1a4231]">
+            <i class="fas fa-lock text-sm"></i>
+            Sécurité
+          </button>
+        </div>
+
+      </div>
+
+      <!-- COLONNE DROITE : Zone d'Édition & Alertes -->
+      <div class="md:col-span-3 space-y-4">
+
+        <!-- Feedback Alerts -->
+        @if (successMessage()) {
+          <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
+            <i class="fas fa-circle-check text-emerald-600 text-base"></i>
+            {{ successMessage() }}
+          </div>
+        }
+
+        @if (errorMessage()) {
+          <div class="p-4 bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center gap-2">
+            <i class="fas fa-circle-exclamation text-rose-600 text-base"></i>
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <!-- ONGLET 1 : INFORMATIONS -->
+        @if (activeTab() === 'profile') {
+          <div class="bg-white border border-[#e5dfd4] p-6 shadow-sm">
+            <h2 class="text-xs font-black text-[#1a4231] uppercase tracking-wider border-b border-[#e5dfd4] pb-3 mb-6">
+              Modifier mes informations personnelles
+            </h2>
+
+            <form [formGroup]="profileForm" (ngSubmit)="updateProfile()" class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-[10px] font-black uppercase text-slate-500 mb-1">Prénom</label>
+                  <input type="text" formControlName="firstName" class="w-full px-3 py-2 text-xs border border-[#e5dfd4] focus:border-[#1a4231] focus:ring-1 focus:ring-[#1a4231] outline-none">
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-black uppercase text-slate-500 mb-1">Nom</label>
+                  <input type="text" formControlName="lastName" class="w-full px-3 py-2 text-xs border border-[#e5dfd4] focus:border-[#1a4231] focus:ring-1 focus:ring-[#1a4231] outline-none">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-[10px] font-black uppercase text-slate-500 mb-1">Identifiant (Immuable)</label>
+                  <input type="text" formControlName="username" class="w-full px-3 py-2 text-xs border border-[#e5dfd4] bg-[#f8f6f2] text-slate-500 font-mono cursor-not-allowed">
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-black uppercase text-slate-500 mb-1">Adresse Email</label>
+                  <input type="email" formControlName="email" class="w-full px-3 py-2 text-xs border border-[#e5dfd4] focus:border-[#1a4231] focus:ring-1 focus:ring-[#1a4231] outline-none">
+                </div>
+              </div>
+
+              <div class="pt-4 flex justify-end border-t border-[#e5dfd4] mt-6">
+                <button
+                  type="submit"
+                  [disabled]="profileForm.invalid || loading()"
+                  class="px-6 py-2.5 bg-[#1a4231] text-[#f9d71c] text-xs font-bold uppercase tracking-wider hover:bg-[#1a4231]/90 disabled:opacity-50 transition-all shadow-sm rounded-none">
+                  {{ loading() ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        }
+
+        <!-- ONGLET 2 : MOT DE PASSE -->
+        @if (activeTab() === 'password') {
+          <div class="bg-white border border-[#e5dfd4] p-6 shadow-sm">
+            <h2 class="text-xs font-black text-[#1a4231] uppercase tracking-wider border-b border-[#e5dfd4] pb-3 mb-6">
+              Changer le mot de passe
+            </h2>
+
+            <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()" class="space-y-4 max-w-lg">
+              <div>
+                <label class="block text-[10px] font-black uppercase text-slate-500 mb-1">Mot de passe actuel</label>
+                <input type="password" formControlName="oldPassword" class="w-full px-3 py-2 text-xs border border-[#e5dfd4] focus:border-[#1a4231] focus:ring-1 focus:ring-[#1a4231] outline-none">
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-[10px] font-black uppercase text-slate-500 mb-1">Nouveau mot de passe</label>
+                  <input type="password" formControlName="newPassword" class="w-full px-3 py-2 text-xs border border-[#e5dfd4] focus:border-[#1a4231] focus:ring-1 focus:ring-[#1a4231] outline-none">
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-black uppercase text-slate-500 mb-1">Confirmer le mot de passe</label>
+                  <input type="password" formControlName="confirmPassword" class="w-full px-3 py-2 text-xs border border-[#e5dfd4] focus:border-[#1a4231] focus:ring-1 focus:ring-[#1a4231] outline-none">
+                </div>
+              </div>
+
+              @if (passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched) {
+                <span class="text-[10px] text-rose-600 font-bold block">
+                  Les mots de passe ne correspondent pas.
+                </span>
+              }
+
+              <div class="pt-4 flex justify-start border-t border-[#e5dfd4] mt-6">
+                <button
+                  type="submit"
+                  [disabled]="passwordForm.invalid || loading()"
+                  class="px-6 py-2.5 bg-[#1a4231] text-[#f9d71c] text-xs font-bold uppercase tracking-wider hover:bg-[#1a4231]/90 disabled:opacity-50 transition-all shadow-sm rounded-none">
+                  {{ loading() ? 'Modification...' : 'Modifier le mot de passe' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        }
+
+      </div>
+
+    </div>
+
+  </div>
+</tx-space-template>
