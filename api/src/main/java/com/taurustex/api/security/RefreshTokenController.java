@@ -100,10 +100,10 @@ public class RefreshTokenController {
             // 4. Rotation du Cookie
             ResponseCookie newCookie = ResponseCookie.from("refresh", tokens.getRefresh())
                     .httpOnly(true)
-                    .secure(httpsMode)
+                    .secure(true) // Obligatoire quand sameSite est à "None"
                     .path("/")
                     .maxAge(7 * 24 * 60 * 60)
-                    .sameSite("Lax")
+                    .sameSite("None") // Autorise l'envoi du cookie entre sous-domaines Cross-Site
                     .build();
 
             log.info("Access Token renouvelé pour : {}", username);
