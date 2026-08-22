@@ -113,7 +113,9 @@ export class AuthService {
    */
   login(data: any): Observable<{ access: string }> {
     const loginUrl = environment.apiUrl.replace('/iai-concours-api', '') + '/login';
-    return this.http.post<{ access: string }>(loginUrl, data).pipe(
+    return this.http.post<{ access: string }>(loginUrl, data,{
+      withCredentials: true // OBLIGATOIRE pour stocker le cookie SameSite=None
+    }).pipe(
       tap((res) => this.setAccessToken(res.access))
     );
   }
