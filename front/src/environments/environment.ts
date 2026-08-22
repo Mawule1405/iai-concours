@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.taurustex.com/api'
+  apiUrl: 'https://back-iai-concours.onrender.com/api'
 };
