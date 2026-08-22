@@ -14,13 +14,14 @@ import java.util.List;
 @Component
 public class ExcelCsvExportService {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
     private static final String[] HEADERS = {
-            "N_ENR", "N_TABLE", "NOM", "PRENOMS", "DATE_NAIS",
-            "SEXE", "EMAIL", "TELEPHONE", "SERIE", "NATIONALITE",
-            "OPTION", "STATUT"
+            "N_ENR", "NOM", "PRENOMS", "DATE_NAIS", "SEXE",
+            "EMAIL", "TELEPHONE", "SERIE", "NATIONALITE", "OPTION",
+            "REF_TRANS", "MONTANT", "DATE_PAIEMENT", "TEL_TRANS", "HEURE_TRANS"
     };
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     /**
      * Génère un fichier Excel (.xlsx) sous forme de tableau d'octets.
@@ -29,7 +30,7 @@ public class ExcelCsvExportService {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Candidats");
 
-            // En-tête style (Fond vert foncé / texte blanc)
+            // Style d'en-tête (Fond vert foncé / texte blanc)
             CellStyle headerStyle = workbook.createCellStyle();
             Font headerFont = workbook.createFont();
             headerFont.setBold(true);
@@ -52,22 +53,21 @@ public class ExcelCsvExportService {
                 Row row = sheet.createRow(rowIdx++);
 
                 row.createCell(0).setCellValue(nullToEmpty(c.getNumero()));
-                row.createCell(1).setCellValue(nullToEmpty(c.getNumeroTable()));
-                row.createCell(2).setCellValue(nullToEmpty(c.getLastName()));
-                row.createCell(3).setCellValue(nullToEmpty(c.getFirstName()));
+                row.createCell(1).setCellValue(nullToEmpty(c.getLastName()));
+                row.createCell(2).setCellValue(nullToEmpty(c.getFirstName()));
+                row.createCell(3).setCellValue(nullToEmpty(c.getBirthDate()));
+                row.createCell(4).setCellValue(nullToEmpty(c.getGender()));
+                row.createCell(5).setCellValue(nullToEmpty(c.getEmail()));
+                row.createCell(6).setCellValue(nullToEmpty(c.getPhone()));
+                row.createCell(7).setCellValue(nullToEmpty(c.getSerie()));
+                row.createCell(8).setCellValue(nullToEmpty(c.getNationality()));
+                row.createCell(9).setCellValue(nullToEmpty(c.getOption()));
 
-                Cell birthCell = row.createCell(4);
-                if (c.getBirthDate() != null) {
-                    birthCell.setCellValue(c.getBirthDate());
-                }
-
-                row.createCell(5).setCellValue(nullToEmpty(c.getGender()));
-                row.createCell(6).setCellValue(nullToEmpty(c.getEmail()));
-                row.createCell(7).setCellValue(nullToEmpty(c.getPhone()));
-                row.createCell(8).setCellValue(nullToEmpty(c.getSerie()));
-                row.createCell(9).setCellValue(nullToEmpty(c.getNationality()));
-                row.createCell(10).setCellValue(nullToEmpty(c.getOption()));
-                row.createCell(11).setCellValue(c.getStatus() != null ? c.getStatus() : "");
+                row.createCell(10).setCellValue(nullToEmpty(c.getNumberOfTransactions()));
+                row.createCell(11).setCellValue(c.getAmount() != null ? c.getAmount().doubleValue() : 0.0);
+                row.createCell(12).setCellValue(c.getPaymentDate() != null ? c.getPaymentDate().format(DATE_FORMATTER) : "");
+                row.createCell(13).setCellValue(nullToEmpty(c.getTransferPhone()));
+                row.createCell(14).setCellValue(c.getTransferHour() != null ? c.getTransferHour().format(TIME_FORMATTER) : "");
             }
 
             // Auto-ajustement de la largeur des colonnes
@@ -81,29 +81,32 @@ public class ExcelCsvExportService {
     }
 
     /**
-     * Génère un fichier CSV sous forme de tableau d'octets avec séparateur point-virgule (;).
+     * Génère un fichier CSV avec séparateur point-virgule (;).
      */
     public byte[] exportToCsv(List<CandidateExportDto> candidates) {
         StringBuilder csvBuilder = new StringBuilder();
 
-        // En-têtes avec BOM UTF-8 pour un affichage correct des caractères sous Excel
+        // En-têtes avec BOM UTF-8
         csvBuilder.append("\uFEFF");
         csvBuilder.append(String.join(";", HEADERS)).append("\n");
 
-        // Lignes de données (Alignées exactement sur HEADERS)
+        // Lignes de données
         for (CandidateExportDto c : candidates) {
             csvBuilder.append(escapeCsv(c.getNumero())).append(";")
-                    .append(escapeCsv(c.getNumeroTable())).append(";")
                     .append(escapeCsv(c.getLastName())).append(";")
                     .append(escapeCsv(c.getFirstName())).append(";")
-                    .append(c.getBirthDate() != null ? c.getBirthDate() : "").append(";")
+                    .append(escapeCsv(c.getBirthDate())).append(";")
                     .append(escapeCsv(c.getGender())).append(";")
                     .append(escapeCsv(c.getEmail())).append(";")
                     .append(escapeCsv(c.getPhone())).append(";")
                     .append(escapeCsv(c.getSerie())).append(";")
                     .append(escapeCsv(c.getNationality())).append(";")
                     .append(escapeCsv(c.getOption())).append(";")
-                    .append(c.getStatus() != null ? c.getStatus() : "").append("\n");
+                    .append(escapeCsv(c.getNumberOfTransactions())).append(";")
+                    .append(c.getAmount() != null ? c.getAmount().toString() : "").append(";")
+                    .append(c.getPaymentDate() != null ? c.getPaymentDate().format(DATE_FORMATTER) : "").append(";")
+                    .append(escapeCsv(c.getTransferPhone())).append(";")
+                    .append(c.getTransferHour() != null ? c.getTransferHour().format(TIME_FORMATTER) : "").append("\n");
         }
 
         return csvBuilder.toString().getBytes(StandardCharsets.UTF_8);

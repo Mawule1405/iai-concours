@@ -1,11 +1,14 @@
 package com.taurustex.api.dtos;
 
 import com.taurustex.api.enums.Option;
+import com.taurustex.api.enums.PaymentMethod;
 import com.taurustex.api.enums.Serie;
 import com.taurustex.api.enums.Status;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -22,8 +25,14 @@ public class CandidateExportDto {
     private String phone;
     private String serie;
     private String nationality;
-    private String numeroTable;
     private String option;
-    private String status;
+
+    private String numberOfTransactions;
+    private BigDecimal amount;
+    private LocalDate paymentDate;
+    private String transferPhone;
+    private LocalTime transferHour;
+
+    private String numeroTable;
 
 }

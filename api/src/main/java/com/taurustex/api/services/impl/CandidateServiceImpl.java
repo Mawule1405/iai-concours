@@ -125,15 +125,26 @@ public class CandidateServiceImpl implements CandidateService {
         List<Candidate> candidates = candidateRepository.findAll(spec, defaultSort);
         List<CandidateExportDto> cands = candidateExportMapper.toDto(candidates);
 
+        // Compteurs distincts pour le cas où l'export est sur TOUT
+        int countIngt = 1;
+        int countIngc = 1;
+
         for (int i = 0; i < cands.size(); i++) {
             CandidateExportDto cand = cands.get(i);
-            boolean isWorksEng = cand.getOption() != null && (
+
+            boolean isIngt = cand.getOption() != null && (
                     Option.WORKS_ENGINEERING.name().equalsIgnoreCase(cand.getOption()) ||
                             cand.getOption().toLowerCase().contains("travaux")
             );
 
-            String numberFormat = isWorksEng ? "%03d" : "%04d";
-            cand.setNumeroTable(String.format(numberFormat, i + 1));
+            if (option == null) {
+                // Export sur TOUT : numérotation commune globale sur 4 caractères
+                cand.setNumeroTable(String.format("%04d", i + 1));
+            } else {
+                // Export filtré : numérotation distincte sur 3 caractères selon le type
+                int sequenceNumber = isIngt ? countIngt++ : countIngc++;
+                cand.setNumeroTable(String.format("%03d", sequenceNumber));
+            }
         }
 
         CandidateReport report = new CandidateReport();
@@ -145,10 +156,10 @@ public class CandidateServiceImpl implements CandidateService {
 
         if (Option.WORKS_ENGINEERING.equals(option)) {
             report.setTitle("CONCOURS D'ENTRÉE À L'IAI");
-            report.setDescription("Liste des candidats - Cycle Ingénieur des Travaux Informatiques");
+            report.setDescription("Liste des candidats - Cycle Ingénieur des Travaux Informatiques (INGT)");
         } else if (Option.DESIGN_ENGINEERING.equals(option)) {
             report.setTitle("CONCOURS D'ENTRÉE À L'IAI");
-            report.setDescription("Liste des candidats - Cycle Ingénieur de Conception");
+            report.setDescription("Liste des candidats - Cycle Ingénieur de Conception (INGC)");
         } else {
             report.setTitle("LISTE DES CANDIDATS");
             report.setDescription("Toutes options confondues");
@@ -161,7 +172,6 @@ public class CandidateServiceImpl implements CandidateService {
             default -> throw new IllegalStateException("Unexpected value: " + format);
         };
     }
-
     // =========================================================================
     // 1. STATISTIQUES GLOBALES (Sans aucun filtre)
     // =========================================================================

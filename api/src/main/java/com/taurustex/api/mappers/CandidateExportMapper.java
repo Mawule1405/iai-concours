@@ -1,6 +1,7 @@
 package com.taurustex.api.mappers;
 
 import com.taurustex.api.dtos.CandidateExportDto;
+import com.taurustex.api.enums.Option;
 import com.taurustex.api.models.Candidate;
 import org.springframework.stereotype.Component;
 
@@ -20,11 +21,22 @@ public class CandidateExportMapper {
         dto.setNationality(candidate.getNationality());
         dto.setPhone(candidate.getPhone());
         dto.setEmail(candidate.getEmail());
-        dto.setStatus(candidate.getStatus().name());
         dto.setSerie(candidate.getSerie().name());
-        dto.setOption(candidate.getOption().name());
+
+        if(Option.WORKS_ENGINEERING.equals(candidate.getOption())) {
+            dto.setOption("INGT");
+        }else{
+            dto.setOption("INGC");
+        }
+
         dto.setNumero(candidate.getNumero());
-        dto.setNumeroTable(candidate.getNumeroTable());
+        if(candidate.getPayment() != null) {
+            dto.setAmount(candidate.getPayment().getAmount());
+            dto.setNumberOfTransactions(candidate.getPayment().getNumberOfTransactions());
+            dto.setPaymentDate(candidate.getPayment().getPaymentDate());
+            dto.setTransferPhone(candidate.getPayment().getTransferPhone());
+            dto.setTransferHour(candidate.getPayment().getTransferHour());
+        }
         return dto;
     }
 
