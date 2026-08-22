@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {ChangeDetectorRef, Component, inject} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
@@ -15,6 +15,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef)
 
   loginForm: FormGroup;
   errorMessage: string | null = null;
@@ -45,6 +46,7 @@ export class LoginComponent {
       next: () => {
         this.isLoading = false;
         this.router.navigate(['/control-space/dashboard']); // Redirection après succès
+        this.cdr.detectChanges()
       },
       error: (err) => {
         this.isLoading = false;
