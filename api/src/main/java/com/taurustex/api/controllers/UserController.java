@@ -93,9 +93,9 @@ public class UserController {
     }
 
     @PostMapping("/new-password")
-    public ResponseEntity<Boolean> getNewPassword(@RequestBody PasswordChangeRequest request) {
+    public ResponseEntity<Boolean> getNewPassword(@RequestBody PasswordChangeRequest request,Principal principal) {
         boolean result = userService.getNewPassword(
-                request.emailOrUsername(),
+                principal.getName(),
                 request.oldPassword(),
                 request.newPassword()
         );

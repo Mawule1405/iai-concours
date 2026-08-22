@@ -9,7 +9,6 @@ import com.taurustex.api.models.AppUser;
 import com.taurustex.api.repositories.AppRoleRepository;
 import com.taurustex.api.repositories.AppUserRepository;
 import com.taurustex.api.services.AppUserService;
-import com.taurustex.api.tools.emails.EmailService;
 import com.taurustex.api.utils.GeneratePasswordUtil;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +36,6 @@ public class AppUserServiceImpl implements AppUserService {
     private final AppRoleRepository roleRepository;
     private final AppUserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final EmailService emailService;
 
 
 
@@ -46,21 +44,13 @@ public class AppUserServiceImpl implements AppUserService {
         log.info("Création de l'utilisateur : {}", userDto.getUsername());
         AppUser user = userMapper.toEntity(userDto);
 
-        String rawPassword = GeneratePasswordUtil.generateRandomPassword();
+        String rawPassword = "password";
         user.setPassword(passwordEncoder.encode(rawPassword));
         user.setRoles(fetchRoles(userDto));
         user.setEnabled(true);
         user.setLocked(false);
 
         AppUser savedUser = userRepository.save(user);
-
-        try {
-
-            emailService.sendUserInformation(user.getEmail(), user.getFirstName() + " " + user.getLastName(),
-                    user.getUsername(), rawPassword, "");
-        } catch (MessagingException e) {
-            log.error("Erreur envoi email création : {}", e.getMessage());
-        }
 
         return userMapper.toDto(savedUser);
     }
@@ -110,17 +100,10 @@ public class AppUserServiceImpl implements AppUserService {
         AppUser user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé"));
 
-        String newPassword = GeneratePasswordUtil.generateRandomPassword();
+        String newPassword = "password";
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
-        try {
-
-            emailService.sendPasswordResetInfo(user.getEmail(), user.getFirstName() + " " + user.getLastName(),
-                    newPassword, "");
-        } catch (MessagingException e) {
-            log.error("Erreur envoi email reset : {}", e.getMessage());
-        }
     }
 
     @Override
@@ -129,6 +112,7 @@ public class AppUserServiceImpl implements AppUserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé"));
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+
             throw new IllegalArgumentException("L'ancien mot de passe est incorrect");
         }
 
@@ -145,26 +129,13 @@ public class AppUserServiceImpl implements AppUserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé avec cet identifiant"));
 
         // 2. Génération d'un mot de passe aléatoire
-        String newRawPassword = GeneratePasswordUtil.generateRandomPassword();
+        String newRawPassword = "password";
 
         // 3. Mise à jour du mot de passe dans la base (encodé)
         user.setPassword(passwordEncoder.encode(newRawPassword));
         userRepository.save(user);
 
-        // 4. Envoi par e-mail
-        try {
-            emailService.sendPasswordResetInfo(
-                    user.getEmail(),
-                    user.getFirstName() + " " + user.getLastName(),
-                    newRawPassword,""
-            );
-            log.info("Nouveau mot de passe envoyé avec succès à : {}", user.getEmail());
-            return true;
-        } catch (MessagingException e) {
-            log.error("Échec de l'envoi de l'email de réinitialisation pour : {}", user.getEmail());
-            // Optionnel : lever une exception si l'envoi est critique pour ton workflow
-            return false;
-        }
+        return true;
     }
     @Override
     public void deleteUser(String id) {

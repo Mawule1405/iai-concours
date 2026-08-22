@@ -52,7 +52,10 @@ export class UtilisateurComponent implements OnInit {
   }
 
   loadRoles(){
-    this.roleService.getAllRoles().subscribe((data)=>this.roles=data)
+    this.roleService.getAllRoles().subscribe((data)=>
+    {this.roles=data
+      this.cdr.detectChanges()
+    })
   }
 
   // Handlers pour le Template
@@ -76,6 +79,7 @@ export class UtilisateurComponent implements OnInit {
   // Actions Utilisateurs
   toggleRoles(userId: string) {
     this.expandedUserId = this.expandedUserId === userId ? null : userId;
+    this.cdr.detectChanges()
   }
 
   onToggleStatus(user: AppUser) {
@@ -159,6 +163,7 @@ export class UtilisateurComponent implements OnInit {
 
     this.selectedUser = user;
     this.showUpdateModal = true;
+    this.cdr.detectChanges()
   }
 
 
@@ -211,6 +216,7 @@ export class UtilisateurComponent implements OnInit {
       this.userService.updateUser(this.selectedUser.id ,$event).subscribe({
         next: () => {
           this.loadUsers();
+          this.cdr.detectChanges()
           this.notifyService.success("LE COMPTE DE L'UTILISATEUR A BIEN ÉTÉ MODIFIER.", "MODIFICATION DE COMPTE");},
         error: (httpError) => {
 
@@ -222,5 +228,10 @@ export class UtilisateurComponent implements OnInit {
         }
       })
     }
+  }
+
+  onClose() {
+    this.showUpdateModal = false;
+    this.cdr.detectChanges()
   }
 }

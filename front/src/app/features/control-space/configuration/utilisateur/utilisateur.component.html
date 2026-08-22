@@ -16,45 +16,47 @@
 >
   <table class="w-full text-left border-collapse">
     <thead class="sticky top-0 z-10 shadow-sm">
-    <tr class="bg-slate-100 border-b border-slate-200 text-[10px] font-bold uppercase text-slate-600 tracking-wider">
-      <th class="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Utilisateur</th>
-      <th class="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Rôles</th>
-      <th class="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
-      <th class="px-4 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+    <tr class="bg-[var(--color-iai-beige-100)] border-b border-[var(--color-iai-beige-200)] text-[10px] font-bold uppercase tracking-wider">
+      <th class="px-4 py-3 text-[9px] font-black text-[var(--color-iai-green-700)] uppercase tracking-widest">Utilisateur</th>
+      <th class="px-4 py-3 text-[9px] font-black text-[var(--color-iai-green-700)] uppercase tracking-widest">Rôles</th>
+      <th class="px-4 py-3 text-[9px] font-black text-[var(--color-iai-green-700)] uppercase tracking-widest text-center">Status</th>
+      <th class="px-4 py-3 text-[9px] font-black text-[var(--color-iai-green-700)] uppercase tracking-widest text-right">Actions</th>
     </tr>
     </thead>
 
-    <tbody class="divide-y divide-slate-100">
+    <tbody class="divide-y divide-[var(--color-iai-beige-200)]">
       @for (user of users; track user.id) {
-        <tr class="hover:bg-slate-50/80 transition-colors group">
+        <tr class="hover:bg-[var(--color-iai-beige-50)] transition-colors group">
+          <!-- Utilisateur -->
           <td class="px-4 py-3">
             <div class="flex items-center space-x-3">
-              <div class="w-8 h-8 bg-brand-blue-900 flex items-center justify-center text-white text-[10px] font-bold">
+              <div class="w-8 h-8 bg-[var(--color-iai-green-900)] flex items-center justify-center text-[var(--color-iai-yellow-500)] text-[10px] font-bold shadow-sm">
                 {{ user.username.substring(0, 2).toUpperCase() }}
               </div>
               <div>
-                <p class="text-[11px] font-black text-brand-blue-900 uppercase tracking-tight">{{ user.firstName }} {{ user.lastName }}</p>
-                <p class="text-[9px] text-slate-400 font-bold tracking-tighter">{{ user.email }}</p>
+                <p class="text-[11px] font-black text-[var(--color-iai-green-900)] uppercase tracking-tight">{{ user.firstName }} {{ user.lastName }}</p>
+                <p class="text-[9px] text-[var(--color-iai-green-500)] font-bold tracking-tighter">{{ user.email }}</p>
               </div>
             </div>
           </td>
 
+          <!-- Rôles -->
           <td class="px-4 py-3">
             <div class="relative inline-block">
               <button (click)="toggleRoles(user.id!)"
-                      class="flex items-center space-x-2 px-3 py-1 border border-slate-200 text-[9px] font-black uppercase tracking-widest hover:bg-brand-blue-900 hover:text-white transition-all">
+                      class="flex items-center space-x-2 px-3 py-1 border border-[var(--color-iai-beige-200)] bg-white text-[var(--color-iai-green-900)] text-[9px] font-black uppercase tracking-widest hover:bg-[var(--color-iai-green-900)] hover:text-white transition-all">
                 <span>{{ user.roles.length }} Rôles</span>
                 <i class="fas fa-chevron-down text-[7px]"></i>
               </button>
 
               @if (expandedUserId === user.id) {
-                <div class="absolute left-0 mt-1 w-48 bg-slate-900 text-white z-50 shadow-2xl border border-slate-700 animate-in fade-in slide-in-from-top-1">
-                  <div class="p-2 border-b border-slate-800 bg-slate-800/50">
-                    <p class="text-[7px] font-black text-brand-orange-500 uppercase tracking-widest">Assigned Privileges</p>
+                <div class="absolute left-0 mt-1 w-48 bg-[var(--color-iai-green-900)] text-white z-50 shadow-2xl border border-[var(--color-iai-green-700)] animate-in fade-in slide-in-from-top-1">
+                  <div class="p-2 border-b border-[var(--color-iai-green-700)] bg-black/20">
+                    <p class="text-[7px] font-black text-[var(--color-iai-yellow-500)] uppercase tracking-widest">Assigned Privileges</p>
                   </div>
                   @for (role of user.roles; track role.id) {
-                    <div class="px-3 py-2 text-[9px] font-bold border-b border-slate-800 last:border-none hover:bg-brand-blue-900">
-                      <i class="fas fa-shield-halved text-brand-orange-500 mr-2"></i> {{ role.name }}
+                    <div class="px-3 py-2 text-[9px] font-bold border-b border-[var(--color-iai-green-700)] last:border-none hover:bg-[var(--color-iai-green-700)] text-[var(--color-iai-beige-50)]">
+                      <i class="fas fa-shield-halved text-[var(--color-iai-yellow-500)] mr-2"></i> {{ role.name }}
                     </div>
                   }
                 </div>
@@ -62,45 +64,47 @@
             </div>
           </td>
 
+          <!-- Statut -->
           <td class="px-4 py-3 text-center">
             <div class="flex justify-center space-x-2">
-              <span [class]="user.enabled ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
+              <span [class]="user.enabled ? 'bg-[var(--color-iai-green-100)] text-[var(--color-iai-green-900)]' : 'bg-red-100 text-red-700'"
                     class="px-2 py-0.5 text-[8px] font-black uppercase tracking-tighter">
                 {{ user.enabled ? 'Actif' : 'Inactif' }}
               </span>
               @if (user.locked) {
-                <span class="bg-slate-900 text-white px-2 py-0.5 text-[8px] font-black uppercase tracking-tighter">
+                <span class="bg-[var(--color-iai-green-900)] text-[var(--color-iai-yellow-500)] px-2 py-0.5 text-[8px] font-black uppercase tracking-tighter">
                   <i class="fas fa-lock mr-1"></i> Lock
                 </span>
               }
             </div>
           </td>
 
+          <!-- Actions -->
           <td class="px-4 py-3">
             <div class="flex justify-end space-x-1">
               <button (click)="onToggleStatus(user)" title="Status"
-                      [class]="user.enabled ? 'text-green-600 hover:bg-green-600' : 'text-slate-400 hover:bg-slate-600'"
-                      class="p-1.5 border border-slate-200 bg-white hover:text-white transition-all">
+                      [class]="user.enabled ? 'text-[var(--color-iai-green-700)] hover:bg-[var(--color-iai-green-700)]' : 'text-slate-400 hover:bg-slate-600'"
+                      class="p-1.5 border border-[var(--color-iai-beige-200)] bg-white hover:text-white transition-all">
                 <i class="fas fa-power-off text-[10px]"></i>
               </button>
 
               <button (click)="onToggleLock(user)" title="Sécurité"
-                      class="p-1.5 border border-slate-200 bg-white text-slate-500 hover:bg-brand-blue-900 hover:text-white transition-all">
+                      class="p-1.5 border border-[var(--color-iai-beige-200)] bg-white text-[var(--color-iai-green-700)] hover:bg-[var(--color-iai-green-900)] hover:text-white transition-all">
                 <i [class]="user.locked ? 'fa-lock-open' : 'fa-user-lock'" class="fas text-[10px]"></i>
               </button>
 
               <button (click)="onResetPassword(user)" title="Reset Password"
-                      class="p-1.5 border border-slate-200 bg-white text-brand-orange-500 hover:bg-brand-orange-500 hover:text-white transition-all">
+                      class="p-1.5 border border-[var(--color-iai-beige-200)] bg-white text-[var(--color-iai-green-900)] hover:bg-[var(--color-iai-yellow-500)] hover:text-[var(--color-iai-green-900)] transition-all">
                 <i class="fas fa-key text-[10px]"></i>
               </button>
 
               <button (click)="onUpdate(user)" title="Modifier"
-                      class="p-1.5 border border-slate-200 bg-white text-brand-blue-900 hover:bg-brand-blue-900 hover:text-white transition-all">
+                      class="p-1.5 border border-[var(--color-iai-beige-200)] bg-white text-[var(--color-iai-green-900)] hover:bg-[var(--color-iai-green-900)] hover:text-white transition-all">
                 <i class="fas fa-pen-to-square text-[10px]"></i>
               </button>
 
               <button (click)="onDelete(user.id!)" title="Supprimer"
-                      class="p-1.5 border border-slate-200 bg-white text-red-600 hover:bg-red-600 hover:text-white transition-all">
+                      class="p-1.5 border border-[var(--color-iai-beige-200)] bg-white text-red-600 hover:bg-red-600 hover:text-white transition-all">
                 <i class="fas fa-trash-can text-[10px]"></i>
               </button>
             </div>
@@ -111,23 +115,21 @@
   </table>
 </tx-table-template>
 
-
 @if (showCreateModal) {
   <app-utilisateur-manage
-  [isOpen]="showCreateModal"
-  [allRoles]="roles"
-
-  (close)="showCreateModal=false"
-  (save)="onSaveCreate($event)"
+    [isOpen]="showCreateModal"
+    [allRoles]="roles"
+    (close)="showCreateModal=false"
+    (save)="onSaveCreate($event)"
   />
 }
 
 @if (showUpdateModal) {
-    <app-utilisateur-manage
-            [isOpen]="showUpdateModal"
-            [allRoles]="roles"
-            [user]="selectedUser"
-            (close)="showUpdateModal=false"
-            (save)="onSaveUpdate($event)"
-    />
+  <app-utilisateur-manage
+    [isOpen]="showUpdateModal"
+    [allRoles]="roles"
+    [user]="selectedUser"
+    (close)="onClose()"
+    (save)="onSaveUpdate($event)"
+  />
 }

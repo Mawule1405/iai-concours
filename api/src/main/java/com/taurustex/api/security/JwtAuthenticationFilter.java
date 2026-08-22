@@ -90,6 +90,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         objectMapper.writeValue(response.getOutputStream(), body);
         log.info("Connexion réussie pour : {}", user.getUsername());
+
     }
 
     @Override
