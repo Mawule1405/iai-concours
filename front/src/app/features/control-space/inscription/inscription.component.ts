@@ -49,7 +49,7 @@ export class InscriptionComponent implements OnInit {
     firstName: ['', [Validators.required, Validators.minLength(2)]],
     birthDate: ['', [Validators.required]],
     gender: ['M', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
+    email: [''],
     phone: ['', [Validators.required]],
     tutorPhone:[''],
     enrolmentDate:[new Date(), [Validators.required]],
