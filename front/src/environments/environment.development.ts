@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
   //apiUrl: 'http://localhost:8085/iai-concours-api'
-  //apiUrl: 'https://back-iai-concours.onrender.com/iai-concours-api'
-  apiUrl : '/iai-concours-api/iai-concours-api'
+  apiUrl: 'https://back-iai-concours.onrender.com/iai-concours-api'
+  //apiUrl : '/iai-concours-api/iai-concours-api'
 };

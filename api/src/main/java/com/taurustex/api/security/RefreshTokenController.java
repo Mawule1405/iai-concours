@@ -103,7 +103,7 @@ public class RefreshTokenController {
                     .secure(true) // Obligatoire quand sameSite est à "None"
                     .path("/")
                     .maxAge(7 * 24 * 60 * 60)
-                    .sameSite("Lax") // Autorise l'envoi du cookie entre sous-domaines Cross-Site
+                    .sameSite("None") // Autorise l'envoi du cookie entre sous-domaines Cross-Site
                     .build();
 
             log.info("Access Token renouvelé pour : {}", username);

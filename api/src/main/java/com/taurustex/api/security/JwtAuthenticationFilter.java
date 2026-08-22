@@ -76,7 +76,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .secure(true) // Obligatoire quand sameSite est à "None"
                 .path("/")
                 .maxAge(7 * 24 * 60 * 60)
-                .sameSite("Lax") // Autorise l'envoi du cookie entre sous-domaines Cross-Site
+                .sameSite("None") // Autorise l'envoi du cookie entre sous-domaines Cross-Site
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, resCookie.toString());
