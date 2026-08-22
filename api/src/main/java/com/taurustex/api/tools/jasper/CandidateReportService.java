@@ -4,6 +4,7 @@ import com.taurustex.api.dtos.CandidateReport;
 import jakarta.annotation.PostConstruct;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.pdf.JRPdfExporter;
@@ -18,21 +19,23 @@ import java.util.*;
 @Service
 public class CandidateReportService {
 
-    private static final String JRXML_PATH = "jasper/candidate_report.jrxml";
+    // Si tu charges un fichier .jasper pré-compilé
+    private static final String JASPER_PATH = "jasper/candidate_report.jasper";
     private JasperReport compiledJasperReport;
 
     /**
-     * Charge et compile le rapport une seule fois au démarrage de l'application.
+     * Charge le rapport pré-compilé (.jasper) une seule fois au démarrage de l'application.
      */
     @PostConstruct
     public void init() {
-        try (InputStream templateStream = getClass().getClassLoader().getResourceAsStream(JRXML_PATH)) {
+        try (InputStream templateStream = getClass().getClassLoader().getResourceAsStream(JASPER_PATH)) {
             if (templateStream == null) {
-                throw new FileNotFoundException("Le fichier JRXML est introuvable sur le chemin : " + JRXML_PATH);
+                throw new FileNotFoundException("Le fichier .jasper est introuvable sur le chemin : " + JASPER_PATH);
             }
-            this.compiledJasperReport = JasperCompileManager.compileReport(templateStream);
+            // Chargement direct du fichier binaire .jasper (ne nécessite pas javac)
+            this.compiledJasperReport = (JasperReport) JRLoader.loadObject(templateStream);
         } catch (Exception e) {
-            throw new IllegalStateException("Erreur lors de la compilation du fichier JRXML : " + JRXML_PATH, e);
+            throw new IllegalStateException("Erreur lors du chargement du fichier .jasper : " + JASPER_PATH, e);
         }
     }
 
@@ -89,10 +92,10 @@ public class CandidateReportService {
             }
 
         } catch (Throwable t) {
-            // Capture à la fois les Exception et les Error (ex: NoClassDefFoundError)
             throw new RuntimeException("Erreur critique lors de la génération du rapport PDF : " + t.getMessage(), t);
         }
     }
+
     /**
      * Duplique un InputStream sous forme de ByteArrayInputStream pour qu'il puisse être réutilisé en toute sécurité par Jasper.
      */
