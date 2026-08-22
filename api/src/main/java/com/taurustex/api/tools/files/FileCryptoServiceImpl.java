@@ -18,7 +18,7 @@ public class FileCryptoServiceImpl implements FileCryptoService {
 
     private final byte[] secretKey;
 
-    public FileCryptoServiceImpl(@Value("${file.encryption.key}") String key) {
+    public FileCryptoServiceImpl(@Value("${app.file.encryption-key}") String key) {
         if (key == null || key.isEmpty()) {
             throw new IllegalArgumentException("La clé de chiffrement ne peut pas être vide.");
         }

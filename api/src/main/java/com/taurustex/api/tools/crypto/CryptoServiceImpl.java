@@ -19,7 +19,7 @@ public class CryptoServiceImpl implements CryptoService {
 
     private final byte[] secretKey;
 
-    public CryptoServiceImpl(@Value("${file.encryption.key}") String key) {
+    public CryptoServiceImpl(@Value("${app.file.encryption-key}") String key) {
         if (key == null || key.trim().isEmpty()) {
             throw new IllegalArgumentException("La clé de chiffrement ne peut pas être vide.");
         }

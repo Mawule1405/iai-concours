@@ -25,8 +25,15 @@ public class CandidateSpecification {
             List<Predicate> predicates = new ArrayList<>();
 
             if (StringUtils.hasText(numero)) {
-                // Recherche partielle sur le numéro (ou numeroTable selon votre entité)
-                predicates.add(cb.like(cb.lower(root.get("numeroTable")), "%" + numero.toLowerCase() + "%"));
+                String pattern = "%" + numero.toLowerCase() + "%";
+
+                Predicate searchByNumero = cb.like(cb.lower(root.get("numero")), pattern);
+                Predicate searchByNumeroTable = cb.like(cb.lower(root.get("numeroTable")), pattern);
+                Predicate searchByFirstName = cb.like(cb.lower(root.get("firstName")), pattern);
+                Predicate searchByLastName = cb.like(cb.lower(root.get("lastName")), pattern);
+
+                // Combine tous les prédicats avec un OR et ajoute le résultat global à la liste
+                predicates.add(cb.or(searchByNumero, searchByNumeroTable, searchByFirstName, searchByLastName));
             }
 
             if (StringUtils.hasText(gender)) {
