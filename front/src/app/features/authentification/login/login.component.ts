@@ -50,12 +50,14 @@ export class LoginComponent {
       },
       error: (err) => {
         this.isLoading = false;
+
         // Gestion des erreurs selon le retour de ton backend
         if (err.status === 401) {
           this.errorMessage = 'Identifiants ou mot de passe incorrects.';
         } else {
           this.errorMessage = 'Une erreur technique est survenue. Veuillez réessayer.';
         }
+        this.cdr.detectChanges()
       }
     });
   }
