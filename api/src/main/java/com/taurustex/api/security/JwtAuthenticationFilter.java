@@ -73,10 +73,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 1. Création du Cookie sécurisé pour le Refresh Token
         ResponseCookie resCookie = ResponseCookie.from("refresh", tokens.getRefresh())
                 .httpOnly(true)
-                .secure(false) // Mettre à true en PROD avec HTTPS
+                .secure(true) // Obligatoire quand sameSite est à "None"
                 .path("/")
-                .maxAge(7 * 24 * 60 * 60) // 7 jours
-                .sameSite("Lax")
+                .maxAge(7 * 24 * 60 * 60)
+                .sameSite("None") // Autorise l'envoi du cookie entre sous-domaines Cross-Site
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, resCookie.toString());
