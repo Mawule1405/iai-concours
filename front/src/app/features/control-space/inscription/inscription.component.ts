@@ -7,6 +7,7 @@ import {Cycle, PaymentMethod, Serie, Status} from '../../../core/enums/enum';
 import {PaymentDto} from '../../../core/models/payment.model';
 import {WebsocketService} from '../../../core/services/websocket.service';
 import {CandidateService} from '../../../core/services/candidate.service';
+import {NotificationService} from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-inscription',
@@ -21,10 +22,12 @@ export class InscriptionComponent implements OnInit {
   private readonly ws = inject(WebsocketService);
   private readonly candidateService = inject(CandidateService)
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly notifyService = inject(NotificationService);
 
   // Étape courante : 1 = Candidat, 2 = Paiement, 3 = Confirmation
   activeStep = signal<number>(1);
   loading = signal<boolean>(false);
+  loadingPlus = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
 
@@ -142,23 +145,29 @@ export class InscriptionComponent implements OnInit {
       return;
     }
 
-    this.loading.set(true);
-    this.errorMessage.set(null);
+    this.notifyService.confirm("Souhaitez-vous enregistrer le dossier et de passer au paiement?",
+      "RECEPTION & PAIEMENT").then((result) => {
+        if (result){
+          this.loading.set(true);
+          this.errorMessage.set(null);
 
-    const candidateData: CandidateDto = this.candidateForm.value;
+          const candidateData: CandidateDto = this.candidateForm.value;
 
-    this.registerService.registerCandidate(candidateData).subscribe({
-      next: (res) => {
-        this.createdCandidate.set(res);
-        this.loading.set(false);
-        this.activeStep.set(2);
-        this.loadPendingCandidate()
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.errorMessage.set(err?.error?.message || "Erreur lors de l'enregistrement du candidat.");
-      }
-    });
+          this.registerService.registerCandidate(candidateData).subscribe({
+            next: (res) => {
+              this.createdCandidate.set(res);
+              this.loading.set(false);
+              this.activeStep.set(2);
+              this.loadPendingCandidate()
+            },
+            error: (err) => {
+              this.loading.set(false);
+              this.errorMessage.set(err?.error?.message || "Erreur lors de l'enregistrement du candidat.");
+            }
+          });
+        }
+    })
+
   }
 
   // Validation du Paiement
@@ -174,23 +183,29 @@ export class InscriptionComponent implements OnInit {
       return;
     }
 
-    this.loading.set(true);
-    this.errorMessage.set(null);
+    this.notifyService.confirm("Souhaitez-vous enregistrer le paiment du candidat?",
+      "Paiment du candidat").then((result) => {
+        if (result) {
+          this.loading.set(true);
+          this.errorMessage.set(null);
 
-    const paymentData: PaymentDto = this.paymentForm.value;
+          const paymentData: PaymentDto = this.paymentForm.value;
 
-    this.registerService.registerPayment(candidate.id, paymentData).subscribe({
-      next: () => {
-        this.loading.set(false);
-        this.successMessage.set("Inscription et paiement enregistrés avec succès !");
-        this.activeStep.set(3);
-        this.loadPendingCandidate()
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.errorMessage.set(err?.error?.message || "Erreur lors du traitement du paiement.");
-      }
-    });
+          this.registerService.registerPayment(candidate.id||"", paymentData).subscribe({
+            next: () => {
+              this.loading.set(false);
+              this.successMessage.set("Inscription et paiement enregistrés avec succès !");
+              this.activeStep.set(3);
+              this.loadPendingCandidate()
+            },
+            error: (err) => {
+              this.loading.set(false);
+              this.errorMessage.set(err?.error?.message || "Erreur lors du traitement du paiement.");
+            }
+          });
+        }
+    })
+
   }
 
   resetWorkflow(): void {
@@ -202,4 +217,35 @@ export class InscriptionComponent implements OnInit {
     this.successMessage.set(null);
     this.activeStep.set(1);
   }
+
+  savePlus() {
+    if (this.candidateForm.invalid) {
+      this.candidateForm.markAllAsTouched();
+      return;
+    }
+
+    this.notifyService.confirm("Souhaitez-vous enregistrer ce dossier et d'enregistrer d'autres?",
+      "RECEPTION DU DOSSIER").then((result) => {
+        if(result){
+          this.loadingPlus.set(true);
+          this.errorMessage.set(null);
+
+          const candidateData: CandidateDto = this.candidateForm.value;
+
+          this.registerService.registerCandidate(candidateData).subscribe({
+            next: (res) => {
+              this.loadingPlus.set(false);
+              this.loadPendingCandidate()
+              this.resetWorkflow();
+            },
+            error: (err) => {
+              this.loadingPlus.set(false);
+              this.errorMessage.set(err?.error?.message || "Erreur lors de l'enregistrement du candidat.");
+            }
+          });
+        }
+    })
+  }
+
+  protected readonly Cycle = Cycle;
 }

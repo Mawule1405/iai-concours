@@ -47,6 +47,7 @@ export class CandidateManagementComponent implements OnInit {
   // State des candidats et chargement
   candidates = signal<CandidateDto[]>([]);
   loading = signal<boolean>(false);
+  exportLoading = signal(false)
 
   // Filtres
   searchNumero = signal<string>('');
@@ -131,6 +132,7 @@ export class CandidateManagementComponent implements OnInit {
   }
 
   exportFile(format: 'csv' | 'excel' | 'pdf'): void {
+    this.exportLoading.set(true)
     this.candidateService.export(format, {
       numero: this.searchNumero() || undefined,
       gender: this.filterGender() || undefined,
@@ -146,6 +148,7 @@ export class CandidateManagementComponent implements OnInit {
       a.download = `candidats_${Date.now()}.${format === 'excel' ? 'xlsx' : format}`;
       a.click();
       window.URL.revokeObjectURL(url);
+      this.exportLoading.set(false);
     });
   }
 

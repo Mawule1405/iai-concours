@@ -206,12 +206,11 @@ public class CandidateServiceImpl implements CandidateService {
         // 1. Calcul des totaux globaux
         CandidateStatisticsDto baseStats = computeStatisticsBase(candidates);
 
-        // 2. Extraction de toutes les dates uniques (Inscription OU Paiement)
+        // 2. Extraction de toutes les dates uniques (Uniquement EnrolmentDate OU PaymentDate)
         List<LocalDate> allDates = candidates.stream()
                 .flatMap(c -> Stream.of(
                         c.getEnrolmentDate(),
-                        c.getPayment() != null ? c.getPayment().getPaymentDate() : null,
-                        c.getCreatedAt() != null ? c.getCreatedAt().toLocalDate() : null
+                        c.getPayment() != null ? c.getPayment().getPaymentDate() : null
                 ))
                 .filter(Objects::nonNull)
                 .distinct()
@@ -221,14 +220,14 @@ public class CandidateServiceImpl implements CandidateService {
         // 3. Calcul des statistiques par jour
         List<CandidateStatisticsDto.CandidateDayStatisticsDto> dailyStats = allDates.stream()
                 .map(date -> {
-                    // Candidats inscrits à cette date spécifique
+                    // Candidats inscrits à cette date spécifique (basé strictement sur enrolmentDate ou paymentDate)
                     List<Candidate> enrolledOnDate = candidates.stream()
                             .filter(c -> date.equals(getEnrolmentDateOrFallback(c)))
                             .toList();
 
                     CandidateStatisticsDto dayBaseStats = computeStatisticsBase(enrolledOnDate);
 
-                    // Calcul du montant réellement encaissé À CETTE DATE (basé sur paymentDate)
+                    // Calcul du montant réellement encaissé À CETTE DATE (basé uniquement sur paymentDate)
                     BigDecimal dailyAmount = candidates.stream()
                             .map(Candidate::getPayment)
                             .filter(p -> p != null && date.equals(p.getPaymentDate()) && p.getAmount() != null)
@@ -244,7 +243,7 @@ public class CandidateServiceImpl implements CandidateService {
                     dayDto.setTotalMaleIngt(dayBaseStats.getTotalMaleIngt());
                     dayDto.setTotalFemaleIngc(dayBaseStats.getTotalFemaleIngc());
                     dayDto.setTotalMaleIngc(dayBaseStats.getTotalMaleIngc());
-                    dayDto.setTotalAmount(dailyAmount); // Utilise le montant payé à cette date précise
+                    dayDto.setTotalAmount(dailyAmount);
 
                     return dayDto;
                 })
@@ -265,23 +264,20 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     /**
-     * Helper privé pour évaluer la date d'inscription avec repli
+     * Helper privé pour évaluer la date d'inscription basée uniquement sur enrolmentDate ou paymentDate
      */
     private LocalDate getEnrolmentDateOrFallback(Candidate c) {
         if (c.getEnrolmentDate() != null) {
             return c.getEnrolmentDate();
         }
-        if (c.getCreatedAt() != null) {
-            return c.getCreatedAt().toLocalDate();
-        }
         if (c.getPayment() != null && c.getPayment().getPaymentDate() != null) {
             return c.getPayment().getPaymentDate();
         }
-        return LocalDate.now();
+        return null;
     }
 
     /**
-     * Helper privé pour éviter la duplication de la logique de calcul de base
+     * Helper privé de calcul des totaux de base
      */
     private CandidateStatisticsDto computeStatisticsBase(List<Candidate> candidates) {
         long totalStudents = candidates.size();
