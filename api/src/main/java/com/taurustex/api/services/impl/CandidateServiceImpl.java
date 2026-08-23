@@ -110,7 +110,9 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Override
     public List<String> getPendingCandidates() {
-        return candidateRepository.findAllByStatus_RegisteredOnlyOrStatus_Pending();
+        return candidateRepository.findPendingCandidateNumeros(
+                List.of(Status.PENDING, Status.REGISTERED_ONLY)
+        );
     }
 
     @Override

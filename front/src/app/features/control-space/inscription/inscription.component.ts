@@ -87,14 +87,16 @@ export class InscriptionComponent implements OnInit {
 
   loadPendingCandidate() {
     this.candidateService.getPendingCandidate().subscribe({
-      next:data=>{
-        this.pendingCandidates.set(data);
+      next: (data) => {
+        this.pendingCandidates.set(data || []);
         this.cdr.detectChanges();
       },
-      error:error=>{
-        console.log(error);
+      error: (error) => {
+        console.error('Erreur lors du chargement des candidats en attente:', error);
+        // Évite de casser le composant en réinitialisant à un tableau vide si besoin
+        this.pendingCandidates.set([]);
       }
-    })
+    });
   }
 
   /**
