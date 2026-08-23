@@ -47,7 +47,7 @@ public class AdminConfig {
     @Order(2)
     public void createSuperAdmin() {
         // On vérifie si l'admin existe déjà pour éviter les doublons au redémarrage
-        if (!appUserRepository.existsByUsername(adminUsername)) {
+        if (appUserRepository.count()==0) {
             log.info("Initialisation du Super Admin à partir des propriétés...");
 
             AppRole role = appRoleRepository.findByName("ROLE_ADMINISTRATOR");
