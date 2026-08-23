@@ -31,7 +31,7 @@ export const routes: Routes = [
           {path: 'permissions', component: PermissionComponent},
           {path: 'roles', component: RoleComponent},
           {path: 'users', component: UtilisateurComponent},
-          {path: 'image', component: ImageComponent}
+          /*{path: 'image', component: ImageComponent}*/
         ]},
       ]},
 
