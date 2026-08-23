@@ -3,6 +3,7 @@ package com.taurustex.api.controllers;
 
 import com.taurustex.api.services.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -42,20 +43,25 @@ public class ImageController {
 
         Resource resource = imageService.readImage();
 
+        // Repli sur l'image par défaut dans resources/images/iai-logo.png si introuvable
         if (resource == null || !resource.exists() || !resource.isReadable()) {
-            return ResponseEntity.notFound().build();
+            resource = new ClassPathResource("images/iai-logo.png");
         }
 
-        // Détection dynamique du Content-Type (image/png, image/jpeg, etc.)
+        // Détection dynamique du Content-Type
         String contentType = null;
         try {
-            contentType = Files.probeContentType(resource.getFile().toPath());
+            if (resource.getURI().getScheme().equals("file")) {
+                contentType = Files.probeContentType(resource.getFile().toPath());
+            } else {
+                contentType = MediaType.IMAGE_PNG_VALUE;
+            }
         } catch (IOException e) {
-            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+            contentType = MediaType.IMAGE_PNG_VALUE;
         }
 
         if (contentType == null) {
-            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+            contentType = MediaType.IMAGE_PNG_VALUE;
         }
 
         return ResponseEntity.ok()
