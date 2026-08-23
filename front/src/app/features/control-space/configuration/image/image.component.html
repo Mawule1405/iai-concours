@@ -1,0 +1,67 @@
+<div class="w-full max-w-xl mx-auto bg-[var(--color-iai-beige-50)] p-4 flex flex-col space-y-4 border border-[var(--color-iai-beige-200)] shadow-sm">
+
+  <!-- En-tête -->
+  <div class="flex items-center justify-between border-b border-[var(--color-iai-beige-200)] pb-2">
+    <div>
+      <h3 class="text-xs font-black text-[var(--color-iai-green-900)] uppercase tracking-tight">Gestion de l'image officielle</h3>
+      <p class="text-[10px] text-[var(--color-iai-green-700)] font-bold uppercase tracking-wide">Aperçu et remplacement du fichier système</p>
+    </div>
+
+    @if (selectedFile()) {
+      <span class="bg-[var(--color-iai-yellow-500)] text-[var(--color-iai-green-900)] text-[10px] font-black uppercase px-2 py-0.5">
+        Sélectionnée
+      </span>
+    }
+  </div>
+
+  <!-- Zone d'affichage compacte -->
+  <div class="w-full h-48 bg-white border border-[var(--color-iai-beige-200)] flex items-center justify-center p-2 relative overflow-hidden">
+
+    @if (isLoading() || isUploading()) {
+      <div class="flex flex-col items-center space-y-2">
+        <div class="animate-spin h-6 w-6 border-2 border-[var(--color-iai-green-900)] border-t-[var(--color-iai-yellow-500)]"></div>
+        <span class="text-[10px] font-black text-[var(--color-iai-green-500)] uppercase tracking-widest">
+          {{ isUploading() ? 'Téléversement...' : 'Chargement...' }}
+        </span>
+      </div>
+    } @else if (previewUrl()) {
+      <img [src]="previewUrl()" alt="Aperçu" class="max-w-full max-h-full object-contain" />
+    } @else if (imageUrl()) {
+      <img [src]="imageUrl()" alt="Image courante" class="max-w-full max-h-full object-contain" />
+    } @else {
+      <div class="flex flex-col items-center space-y-1 text-[var(--color-iai-green-500)]">
+        <p class="text-xs font-bold uppercase tracking-wider">Aucune image disponible</p>
+      </div>
+    }
+
+  </div>
+
+  <!-- Barre d'action inférieure compacte -->
+  <div class="w-full border-t border-[var(--color-iai-beige-200)] pt-3 flex items-center justify-end">
+
+    @if (!selectedFile()) {
+      <label class="bg-[var(--color-iai-green-900)] hover:bg-[var(--color-iai-green-700)] text-white text-[10px] font-black uppercase tracking-wider py-2 px-4 cursor-pointer transition-colors border border-[var(--color-iai-beige-200)] flex items-center space-x-1.5">
+        <span>Changer l'image</span>
+        <input type="file" accept="image/*" class="hidden" (change)="onFileSelected($event)" />
+      </label>
+    } @else {
+      <div class="flex items-center space-x-2 w-full sm:w-auto">
+        <button
+          (click)="cancelSelection()"
+          [disabled]="isUploading()"
+          class="flex-1 sm:flex-initial px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-[10px] font-black uppercase tracking-wider transition-colors disabled:opacity-50">
+          Annuler
+        </button>
+
+        <button
+          (click)="uploadImage()"
+          [disabled]="isUploading()"
+          class="flex-1 sm:flex-initial px-5 py-2 bg-[var(--color-iai-green-900)] hover:bg-[var(--color-iai-green-700)] text-white text-[10px] font-black uppercase tracking-wider transition-colors disabled:opacity-50">
+          Enregistrer
+        </button>
+      </div>
+    }
+
+  </div>
+
+</div>

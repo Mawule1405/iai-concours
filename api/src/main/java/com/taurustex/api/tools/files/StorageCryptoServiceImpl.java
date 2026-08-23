@@ -38,10 +38,10 @@ public class StorageCryptoServiceImpl implements StorageService {
 
             // --- COUCHE DE SÉCURITÉ : CHIFFREMENT ---
             byte[] fileBytes = file.getBytes();
-            byte[] encryptedBytes = fileCryptoService.encrypt(fileBytes);
+            //byte[] encryptedBytes = fileCryptoService.encrypt(fileBytes);
 
             // Écriture du fichier chiffré sur le disque
-            Files.write(targetPath, encryptedBytes);
+            Files.write(targetPath, fileBytes);
 
             log.info("Fichier chiffré et stocké avec succès: {}", fileName);
             return true;
@@ -66,11 +66,11 @@ public class StorageCryptoServiceImpl implements StorageService {
 
             // --- COUCHE DE SÉCURITÉ : DÉCHIFFREMENT ---
             byte[] encryptedBytes = Files.readAllBytes(filePath);
-            byte[] decryptedBytes = fileCryptoService.decrypt(encryptedBytes);
+            //byte[] decryptedBytes = fileCryptoService.decrypt(encryptedBytes);
 
             // Pour retourner une Resource (UrlResource attend un fichier physique),
             // on peut utiliser une ByteArrayResource pour le contenu déchiffré en mémoire.
-            return new org.springframework.core.io.ByteArrayResource(decryptedBytes) {
+            return new org.springframework.core.io.ByteArrayResource(encryptedBytes) {
                 @Override
                 public String getFilename() {
                     return cleanFileName;

@@ -12,6 +12,7 @@ import {InscriptionComponent} from './features/control-space/inscription/inscrip
 import {PermissionComponent} from './features/control-space/configuration/permission/permission.component';
 import {RoleComponent} from './features/control-space/configuration/role/role.component';
 import {UtilisateurComponent} from './features/control-space/configuration/utilisateur/utilisateur.component';
+import {ImageComponent} from './features/control-space/configuration/image/image.component';
 
 export const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -30,6 +31,7 @@ export const routes: Routes = [
           {path: 'permissions', component: PermissionComponent},
           {path: 'roles', component: RoleComponent},
           {path: 'users', component: UtilisateurComponent},
+          {path: 'image', component: ImageComponent}
         ]},
       ]},
 

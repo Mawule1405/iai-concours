@@ -60,6 +60,18 @@
               <span class="font-bold tracking-tight text-[11px] uppercase">Utilisateurs</span>
             }
           </a>
+
+
+          <a routerLink="image"
+             routerLinkActive="!bg-[#1a4231] !text-[#f9d71c] font-black"
+             [class.justify-center]="isCollapsed" [class.px-0]="isCollapsed"
+             class="flex items-center space-x-3 px-6 py-3 rounded-none text-slate-600 hover:bg-[#f8f6f2] hover:text-[#1a4231] transition-all group">
+            <i class="fas fa-image w-5 text-center flex-shrink-0 text-sm"></i>
+            @if (!isCollapsed) {
+              <span class="font-bold tracking-tight text-[11px] uppercase">Image</span>
+            }
+          </a>
+
         </div>
       </section>
 
