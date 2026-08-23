@@ -22,9 +22,7 @@ public class Candidate extends BaseEntity {
     private String firstName;
     private LocalDate birthDate;
     private String gender;
-    @Email @Column(unique = true)
     private String email;
-    @Column(unique = true)
     private String phone;
     private String tutorPhone;
     @Enumerated(EnumType.STRING)

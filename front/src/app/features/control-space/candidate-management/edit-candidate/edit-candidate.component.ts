@@ -86,4 +86,5 @@ export class EditCandidateComponent implements OnInit, OnChanges {
   }
 
 
+  protected readonly Cycle = Cycle;
 }
