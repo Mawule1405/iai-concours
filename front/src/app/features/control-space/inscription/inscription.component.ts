@@ -160,7 +160,7 @@ export class InscriptionComponent implements OnInit {
               this.createdCandidate.set(res);
               this.loading.set(false);
               this.activeStep.set(2);
-              this.loadPendingCandidate()
+              //this.loadPendingCandidate()
             },
             error: (err) => {
               this.loading.set(false);
@@ -198,7 +198,7 @@ export class InscriptionComponent implements OnInit {
               this.loading.set(false);
               this.successMessage.set("Inscription et paiement enregistrés avec succès !");
               this.activeStep.set(3);
-              this.loadPendingCandidate()
+              //this.loadPendingCandidate()
             },
             error: (err) => {
               this.loading.set(false);
@@ -237,7 +237,7 @@ export class InscriptionComponent implements OnInit {
           this.registerService.registerCandidate(candidateData).subscribe({
             next: (res) => {
               this.loadingPlus.set(false);
-              this.loadPendingCandidate()
+              //this.loadPendingCandidate()
               this.resetWorkflow();
             },
             error: (err) => {
