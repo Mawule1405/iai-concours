@@ -79,7 +79,7 @@ public class StorageCryptoServiceImpl implements StorageService {
 
         } catch (Exception e) {
             log.error("Erreur lors de la lecture/déchiffrement du fichier: {}", fileName, e);
-            throw new RuntimeException("Erreur de sécurité lors de l'accès au fichier.");
+            return new org.springframework.core.io.ByteArrayResource(new byte[0]);
         }
     }
 
@@ -108,7 +108,7 @@ public class StorageCryptoServiceImpl implements StorageService {
 
         } catch (Exception e) {
             log.error("Erreur lors de la lecture/déchiffrement du fichier : {}", fileName, e);
-            throw new RuntimeException("Erreur de sécurité lors de l'accès au fichier.", e);
+            return new ByteArrayInputStream(new byte[0]);
         }
     }
 
